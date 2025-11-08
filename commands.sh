@@ -1,0 +1,25 @@
+#infrastructure dependencies
+dotnet add LibraryManagement.Infrastructure reference LibraryManagement.Domain
+
+dotnet add LibraryManagement.Infrastructure package Microsoft.EntityFrameworkCore
+dotnet add LibraryManagement.Infrastructure package Microsoft.EntityFrameworkCore.Sqlite
+dotnet add LibraryManagement.Infrastructure package Microsoft.EntityFrameworkCore.Design
+dotnet add LibraryManagement.Infrastructure/ package Microsoft.Extensions.Configuration
+dotnet add LibraryManagement.Infrastructure/ package Microsoft.Extensions.Configuration.FileExtensions
+dotnet add LibraryManagement.Infrastructure/ package Microsoft.Extensions.Configuration.Json
+
+
+#Api dependencies
+dotnet add LibraryManagement.Api/ reference LibraryManagement.Infrastructure/
+
+dotnet add LibraryManagement.Api package SimpleInjector
+dotnet add LibraryManagement.Api package SimpleInjector.Integration.ServiceCollection
+dotnet add LibraryManagement.Api package SimpleInjector.Integration.AspNetCore
+dotnet add LibraryManagement.Api package Microsoft.EntityFrameworkCore
+dotnet add LibraryManagement.Api package Microsoft.EntityFrameworkCore.Sqlite
+dotnet add LibraryManagement.Api package Microsoft.EntityFrameworkCore.Design
+
+#migrations
+dotnet ef migrations add InitialCreate --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api
+dotnet ef database update --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api
+
