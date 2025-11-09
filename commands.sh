@@ -21,5 +21,7 @@ dotnet add LibraryManagement.Api package Microsoft.EntityFrameworkCore.Design
 
 #migrations
 dotnet ef migrations add InitialCreate --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api
-dotnet ef database update --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api
+#to show SQL comands --verbose
+dotnet ef database update --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api --verbose
+dotnet ef migrations add SeedData --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api
 
