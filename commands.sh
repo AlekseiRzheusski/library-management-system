@@ -18,11 +18,11 @@ dotnet add LibraryManagement.Integration.Tests/ package Npgsql.EntityFrameworkCo
 dotnet add LibraryManagement.Integration.Tests/ package Microsoft.EntityFrameworkCore.Sqlite
 dotnet add LibraryManagement.Integration.Tests/ reference LibraryManagement.Domain
 dotnet test
+dotnet test --logger "console;verbosity=detailed"
 
 
 #Api dependencies
 dotnet add LibraryManagement.Api/ reference LibraryManagement.Infrastructure/
-
 dotnet add LibraryManagement.Api package SimpleInjector
 dotnet add LibraryManagement.Api package SimpleInjector.Integration.ServiceCollection
 dotnet add LibraryManagement.Api package SimpleInjector.Integration.AspNetCore
