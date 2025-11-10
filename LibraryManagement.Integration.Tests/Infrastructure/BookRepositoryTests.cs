@@ -1,8 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+using SimpleInjector.Lifestyles;
 
-using LibraryManagement.Domain.Entities;
-using LibraryManagement.Infrastructure.Repositories;
 using LibraryManagement.Integration.Tests.Fixtures;
+using LibraryManagement.Infrastructure.Repositories.Interfaces;
 
 namespace LibraryManagement.Integration.Tests.Infrastructure;
 
@@ -17,9 +16,9 @@ public class BookRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
     [Fact]
     public async Task GetDetailedBookInfo_WhenIdExists_ShouldReturnEntity()
     {
-        using (var context = _fixture.CreateContext())
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
-            var repository = new BookRepository(context);
+            var repository = _fixture.Container.GetInstance<IBookRepository>();
             var result = await repository.GetDetailedBookInfo(2);
             Assert.NotNull(result);
             Assert.Equal(2, result.BookId);

@@ -1,37 +1,49 @@
-using LibraryManagement.Infrastructure.Data;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using SimpleInjector;
+
+using LibraryManagement.Infrastructure.Data;
+using LibraryManagement.Infrastructure.Repositories;
+using LibraryManagement.Infrastructure.Repositories.Interfaces;
+using SimpleInjector.Lifestyles;
 
 namespace LibraryManagement.Integration.Tests.Fixtures;
 
 public class SqliteTestDatabaseFixture : IAsyncLifetime
 {
-    public LibraryDbContext Context { get; private set; } = null!;
-    private DbContextOptions<LibraryDbContext> _options = null!;
+    public Container Container { get; private set; } = null!;
     private SqliteConnection _connection = null!;
 
     public async Task InitializeAsync()
     {
+        Container = new Container();
+        Container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+
         _connection = new SqliteConnection("DataSource=:memory:");
         await _connection.OpenAsync();
 
-        _options = new DbContextOptionsBuilder<LibraryDbContext>()
-            .UseSqlite(_connection)
-            .Options;
+        Container.Register<LibraryDbContext>(() =>
+        {
+            var options = new DbContextOptionsBuilder<LibraryDbContext>()
+                .UseSqlite(_connection)
+                .Options;
+            return new LibraryDbContext(options);
+        }, Lifestyle.Scoped);
 
-        Context =  new LibraryDbContext(_options);
-        await Context.Database.MigrateAsync();
+        Container.Register<IAuthorRepository, AuthorRepository>(Lifestyle.Scoped);
+        Container.Register<IBookRepository, BookRepository>(Lifestyle.Scoped);
 
-    }
-    public LibraryDbContext CreateContext()
-    {
-        return new LibraryDbContext(_options);
+        using (AsyncScopedLifestyle.BeginScope(Container))
+        {
+            var context = Container.GetInstance<LibraryDbContext>();
+            await context.Database.MigrateAsync();
+        }
+        Container.Verify();
     }
 
     public async Task DisposeAsync()
     {
-        await Context.DisposeAsync();
-        await _connection.CloseAsync();
-        _connection.Dispose();
+        await _connection.DisposeAsync();
+        Container.Dispose();
     }
 }

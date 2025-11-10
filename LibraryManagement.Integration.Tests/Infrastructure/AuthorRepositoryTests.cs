@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using SimpleInjector.Lifestyles;
 
 using LibraryManagement.Domain.Entities;
-using LibraryManagement.Infrastructure.Repositories;
+using LibraryManagement.Infrastructure.Repositories.Interfaces;
 using LibraryManagement.Integration.Tests.Fixtures;
 
 namespace LibraryManagement.Integration.Tests.Infrastructure;
@@ -17,10 +18,12 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
     [Fact]
     public async Task GetByIdAsync_WhenIdExists_ShouldReturnEntity()
     {
-        using (var context = _fixture.CreateContext())
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
-            var repository = new AuthorRepository(context);
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
+
             var result = await repository.GetByIdAsync(2);
+
             Assert.NotNull(result);
             Assert.Equal(2, result.AuthorId);
             Assert.Equal("Andrew", result.FirstName);
@@ -30,9 +33,9 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
     [Fact]
     public async Task GetByIdAsync_WhenIdDoesNotExist_ShouldReturnNull()
     {
-        using (var context = _fixture.CreateContext())
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
-            var repository = new AuthorRepository(context);
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
             var result = await repository.GetByIdAsync(10);
 
             Assert.Null(result);
@@ -42,9 +45,9 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
     [Fact]
     public async Task FindAsync_WhenFirstNameExists_ShouldReturnEntity()
     {
-        using (var context = _fixture.CreateContext())
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
-            var repository = new AuthorRepository(context);
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
             var resultList = await repository.FindAsync(a => a.FirstName == "George");
             Assert.Single(resultList);
 
@@ -56,9 +59,9 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
     [Fact]
     public async Task FindAsync_WhenFirstNameDoesnNotExist_ShouldReturnEmptyList()
     {
-        using (var context = _fixture.CreateContext())
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
-            var repository = new AuthorRepository(context);
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
             var resultList = await repository.FindAsync(a => a.FirstName == "Viktor");
             Assert.Empty(resultList);
         }
@@ -68,9 +71,9 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
     [Fact]
     public async Task AddAsync_ShouldAddEntity()
     {
-        using (var context = _fixture.CreateContext())
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
-            var repository = new AuthorRepository(context);
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
             Author author = new Author
             {
                 FirstName = "Mikhail",
@@ -96,9 +99,9 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
     [Fact]
     public async Task AddAsync_WhenIdExists_ShouldThrowDbUpdateException()
     {
-        using (var context = _fixture.CreateContext())
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
-            var repository = new AuthorRepository(context);
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
             Author authorWithDuplicatedId = new Author
             {
                 AuthorId = 4,
@@ -118,9 +121,9 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
     [Fact]
     public async Task Update_WhenEntityExists_ShouldUpdateEntity()
     {
-        using (var context = _fixture.CreateContext())
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
-            var repository = new AuthorRepository(context);
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
             Author entityToUpdate = new Author
             {
                 FirstName = "Sergey",
@@ -147,9 +150,9 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
     [Fact]
     public async Task Delete_WhenEntityExists_ShouldDeleteEntity()
     {
-        using (var context = _fixture.CreateContext())
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
-            var repository = new AuthorRepository(context);
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
             var entityToDelete = new Author
             {
                 FirstName = "Sergey",
@@ -172,9 +175,9 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
     [Fact]
     public async Task GetAllAsync_WhenEntitiesExists_ShouldReturnList()
     {
-        using (var context = _fixture.CreateContext())
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
-            var repository = new AuthorRepository(context);
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
 
             var numberOfEntities = await repository.CountAsync();
             var list = await repository.GetAllAsync();
