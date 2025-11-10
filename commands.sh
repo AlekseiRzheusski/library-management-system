@@ -9,6 +9,17 @@ dotnet add LibraryManagement.Infrastructure/ package Microsoft.Extensions.Config
 dotnet add LibraryManagement.Infrastructure/ package Microsoft.Extensions.Configuration.Json
 
 
+#Test dependencies
+dotnet add LibraryManagement.Integration.Tests package Testcontainers
+dotnet add LibraryManagement.Integration.Tests package Testcontainers.PostgreSql
+dotnet add LibraryManagement.Integration.Tests/ reference LibraryManagement.Infrastructure/
+dotnet add LibraryManagement.Integration.Tests/ package Microsoft.EntityFrameworkCore
+dotnet add LibraryManagement.Integration.Tests/ package Npgsql.EntityFrameworkCore.PostgreSQL
+dotnet add LibraryManagement.Integration.Tests/ package Microsoft.EntityFrameworkCore.Sqlite
+dotnet add LibraryManagement.Integration.Tests/ reference LibraryManagement.Domain
+dotnet test
+
+
 #Api dependencies
 dotnet add LibraryManagement.Api/ reference LibraryManagement.Infrastructure/
 
@@ -24,4 +35,3 @@ dotnet ef migrations add InitialCreate --project LibraryManagement.Infrastructur
 #to show SQL comands --verbose
 dotnet ef database update --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api --verbose
 dotnet ef migrations add SeedData --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api
-
