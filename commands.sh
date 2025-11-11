@@ -29,6 +29,8 @@ dotnet add LibraryManagement.Application/ package Microsoft.Extensions.Logging.C
 #To run tests
 dotnet test
 dotnet test --logger "console;verbosity=detailed"
+#run one class
+dotnet test --filter "FullyQualifiedName~LibraryManagement.Integration.Tests.Application.BookServiceTests"
 
 #migrations
 dotnet ef migrations add InitialCreate --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api
