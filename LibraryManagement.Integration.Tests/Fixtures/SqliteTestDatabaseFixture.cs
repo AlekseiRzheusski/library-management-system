@@ -8,6 +8,7 @@ using LibraryManagement.Infrastructure.Repositories;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
 using LibraryManagement.Infrastructure;
 using LibraryManagement.Application;
+using LibraryManagement.Api;
 
 namespace LibraryManagement.Integration.Tests.Fixtures;
 
@@ -30,6 +31,7 @@ public class SqliteTestDatabaseFixture : IAsyncLifetime
 
         Container.AddInfrastructure(options);
         Container.AddApplication();
+        Container.AddAutoMapper();
 
         using (AsyncScopedLifestyle.BeginScope(Container))
         {
