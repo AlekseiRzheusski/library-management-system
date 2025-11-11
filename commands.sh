@@ -7,6 +7,7 @@ dotnet add LibraryManagement.Infrastructure package Microsoft.EntityFrameworkCor
 dotnet add LibraryManagement.Infrastructure/ package Microsoft.Extensions.Configuration
 dotnet add LibraryManagement.Infrastructure/ package Microsoft.Extensions.Configuration.FileExtensions
 dotnet add LibraryManagement.Infrastructure/ package Microsoft.Extensions.Configuration.Json
+dotnet add LibraryManagement.Infrastructure/ package SimpleInjector
 
 
 #Test dependencies
@@ -17,6 +18,7 @@ dotnet add LibraryManagement.Integration.Tests/ package Microsoft.EntityFramewor
 dotnet add LibraryManagement.Integration.Tests/ package Npgsql.EntityFrameworkCore.PostgreSQL
 dotnet add LibraryManagement.Integration.Tests/ package Microsoft.EntityFrameworkCore.Sqlite
 dotnet add LibraryManagement.Integration.Tests/ reference LibraryManagement.Domain
+dotnet add LibraryManagement.Integration.Tests/ package SimpleInjector
 dotnet test
 dotnet test --logger "console;verbosity=detailed"
 
