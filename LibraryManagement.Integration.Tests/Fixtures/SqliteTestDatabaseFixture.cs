@@ -5,6 +5,7 @@ using SimpleInjector;
 using LibraryManagement.Infrastructure.Data;
 using LibraryManagement.Infrastructure.Repositories;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
+using LibraryManagement.Infrastructure;
 using SimpleInjector.Lifestyles;
 
 namespace LibraryManagement.Integration.Tests.Fixtures;
@@ -22,16 +23,11 @@ public class SqliteTestDatabaseFixture : IAsyncLifetime
         _connection = new SqliteConnection("DataSource=:memory:");
         await _connection.OpenAsync();
 
-        Container.Register<LibraryDbContext>(() =>
-        {
-            var options = new DbContextOptionsBuilder<LibraryDbContext>()
-                .UseSqlite(_connection)
-                .Options;
-            return new LibraryDbContext(options);
-        }, Lifestyle.Scoped);
+        var options = new DbContextOptionsBuilder<LibraryDbContext>()
+            .UseSqlite(_connection)
+            .Options;
 
-        Container.Register<IAuthorRepository, AuthorRepository>(Lifestyle.Scoped);
-        Container.Register<IBookRepository, BookRepository>(Lifestyle.Scoped);
+        Container.AddInfrastructure(options);
 
         using (AsyncScopedLifestyle.BeginScope(Container))
         {
