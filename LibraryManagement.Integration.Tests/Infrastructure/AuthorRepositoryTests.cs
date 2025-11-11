@@ -67,7 +67,6 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
         }
     }
 
-
     [Fact]
     public async Task AddAsync_ShouldAddEntity()
     {

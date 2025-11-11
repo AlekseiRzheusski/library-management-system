@@ -1,12 +1,13 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using SimpleInjector;
+using SimpleInjector.Lifestyles;
 
 using LibraryManagement.Infrastructure.Data;
 using LibraryManagement.Infrastructure.Repositories;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
 using LibraryManagement.Infrastructure;
-using SimpleInjector.Lifestyles;
+using LibraryManagement.Application;
 
 namespace LibraryManagement.Integration.Tests.Fixtures;
 
@@ -28,6 +29,7 @@ public class SqliteTestDatabaseFixture : IAsyncLifetime
             .Options;
 
         Container.AddInfrastructure(options);
+        Container.AddApplication();
 
         using (AsyncScopedLifestyle.BeginScope(Container))
         {
