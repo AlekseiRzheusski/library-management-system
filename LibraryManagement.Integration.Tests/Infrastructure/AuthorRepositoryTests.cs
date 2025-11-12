@@ -184,4 +184,44 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
             Assert.Equal(numberOfEntities, list.Count());
         }
     }
+
+    [Fact]
+    public async Task ExistsAsync_WhenEntityExists_ShouldReturnTrue()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
+
+            var isExists = await repository.ExistsAsync(a => a.FirstName == "Anton");
+            Assert.True(isExists);
+        }
+    }
+
+    [Fact]
+    public async Task ExistsAsync_WhenEntityDoesNotExist_ShouldReturnFalse()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
+
+            var isExists = await repository.ExistsAsync(a => a.FirstName == "Igor");
+            Assert.False(isExists);
+        }
+    }
+
+    [Fact]
+    public async Task ExistsAsync_WhenTokenIsCanceled_ShouldThrow()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var cancellationTokenSource = new CancellationTokenSource();
+            var token = cancellationTokenSource.Token;
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
+
+            cancellationTokenSource.Cancel();
+
+            await Assert.ThrowsAsync<OperationCanceledException>(async () =>
+                await repository.ExistsAsync(a => a.FirstName == "Anton", token));
+        }
+    }
 }
