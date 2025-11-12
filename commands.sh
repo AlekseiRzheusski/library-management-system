@@ -29,6 +29,9 @@ dotnet add LibraryManagement.Application/ package Microsoft.Extensions.Logging.C
 #Automapper
 dotnet add LibraryManagement.Application/ package AutoMapper
 
+#Fluent Validation
+dotnet add LibraryManagement.Application/ package FluentValidation
+
 #To run tests
 dotnet test
 dotnet test --logger "console;verbosity=detailed"

@@ -5,4 +5,5 @@ namespace LibraryManagement.Application.Services.Interaces;
 public interface IBookService
 {
     Task<BookDto?> GetBookAsync(long bookId);
+    Task<BookDto?> CreateBookAsync(CreateBookCommand command);
 }
