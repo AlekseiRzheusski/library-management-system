@@ -26,6 +26,9 @@ dotnet add LibraryManagement.Integration.Tests package Testcontainers.PostgreSql
 #to use AddConsole
 dotnet add LibraryManagement.Application/ package Microsoft.Extensions.Logging.Console
 
+#Automapper
+dotnet add LibraryManagement.Application/ package AutoMapper
+
 #To run tests
 dotnet test
 dotnet test --logger "console;verbosity=detailed"
