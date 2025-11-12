@@ -12,4 +12,5 @@ public interface IBaseRepository<T> where T : class
     void Update(T entity);
     Task SaveAsync();
     Task<int> CountAsync();
+    Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 }

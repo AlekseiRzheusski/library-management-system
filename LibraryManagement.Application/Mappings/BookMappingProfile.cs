@@ -27,5 +27,9 @@ public class BookMappingProfile : Profile
                 opt => opt.MapFrom(src => src.PublishedDate.HasValue
                     ? src.PublishedDate.Value.ToString("yyyy-MM-dd")
                     : string.Empty));
+
+        CreateMap<CreateBookCommand, Book>()
+            .ForMember(dest => dest.PublishedDate,
+            opt => opt.MapFrom(src => src.PublishedDate != null ? DateTime.Parse(src.PublishedDate) : (DateTime?)null));
     }
 }
