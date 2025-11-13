@@ -65,6 +65,8 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
             Assert.NotNull(resultBookDto);
             Assert.Equal(createBookCommand.Title, resultBookDto.Title);
             Assert.Equal(createBookCommand.PublishedDate, resultBookDto.PublishedDate);
+            Assert.Equal(createBookCommand.AuthorId, resultBookDto.AuthorId);
+            Assert.Equal(createBookCommand.CategoryId, resultBookDto.CategoryId);
         }
     }
 
