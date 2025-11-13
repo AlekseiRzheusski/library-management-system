@@ -4,6 +4,7 @@ using LibraryManagement.Application.Services.DTOs.BookModels;
 using LibraryManagement.Application.Services.Interaces;
 using LibraryManagement.Domain.Entities;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
+using LibraryManagement.Shared.Exceptions;
 
 namespace LibraryManagement.Application.Services;
 
@@ -46,5 +47,17 @@ public class BookService : IBookService
         var newBookDto = _mapper.Map<BookDto>(detailedBook);
 
         return newBookDto;
+    }
+
+    public async Task DeleteBookAsync(long bookId)
+    {
+        var book = await _bookRepository.GetDetailedBookInfo(bookId);
+        if (book is null)
+        {
+            throw new IdNotFoundInDatabaseException($"BookId: {bookId}, doesn't exist");
+        }
+
+        _bookRepository.Delete(book);
+        await _bookRepository.SaveAsync();
     }
 }
