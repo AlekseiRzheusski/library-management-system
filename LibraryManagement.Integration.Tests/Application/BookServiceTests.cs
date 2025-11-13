@@ -90,7 +90,7 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
             {
                 var resultBookDto = await service.CreateBookAsync(createBookCommand);
             });
-            Assert.Equal("Author with such Id doesn't exist; This date cannot be parsed", ex.Message);
+            Assert.Equal("The ISBN should be unique; Author with such Id doesn't exist; This date cannot be parsed", ex.Message);
         }
     }
 

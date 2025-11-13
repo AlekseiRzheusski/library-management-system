@@ -20,7 +20,7 @@ public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
             .NotEmpty().WithMessage("ISBN is required.")
             .Length(10, 13).WithMessage("ISBN must be 13 characters long.")
             .MustAsync(async (isbn, cancellation) =>
-                await _bookRepository.ExistsAsync(b => b.ISBN != isbn))
+                !await _bookRepository.ExistsAsync(b => b.ISBN == isbn))
             .WithMessage("The ISBN should be unique");
 
         RuleFor(b => b.AuthorId)
