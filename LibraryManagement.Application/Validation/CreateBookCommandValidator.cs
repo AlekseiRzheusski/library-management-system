@@ -18,22 +18,22 @@ public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
 
         RuleFor(b => b.Isbn)
             .NotEmpty().WithMessage("ISBN is required.")
-            .Length(10, 13).WithMessage("ISBN must be 13 characters long.")
+            .Length(13).WithMessage("ISBN must be 13 characters long.")
             .MustAsync(async (isbn, cancellation) =>
-                !await _bookRepository.ExistsAsync(b => b.ISBN == isbn))
+                !await _bookRepository.ExistsAsync(b => b.ISBN == isbn, cancellation))
             .WithMessage("The ISBN should be unique");
 
         RuleFor(b => b.AuthorId)
             .NotEmpty().WithMessage("AuthorID is required.")
             .MustAsync(async (authorId, cancellation) =>
-                await _bookRepository.ExistsAsync(b => b.AuthorId == authorId))
+                await _bookRepository.ExistsAsync(b => b.AuthorId == authorId, cancellation))
             .WithMessage("Author with such Id doesn't exist");
 
         RuleFor(b => b.CategoryId)
             .NotEmpty().WithMessage("CategoryID is required.")
             .MustAsync(async (categoryId, cancellation) =>
-                await _bookRepository.ExistsAsync(b => b.CategoryId == categoryId))
-            .WithMessage("Category with such Id doesn't exist");
+                await _bookRepository.ExistsAsync(b => b.CategoryId == categoryId, cancellation))
+            .WithMessage("Category with such Id doesn't exist.");
 
         RuleFor(b => b.PublishedDate)
             .Must((publishedDate) =>

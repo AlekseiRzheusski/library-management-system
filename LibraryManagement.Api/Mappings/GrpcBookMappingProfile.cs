@@ -10,5 +10,6 @@ public class GrpcBookMappingProfile : Profile
     public GrpcBookMappingProfile()
     {
         CreateMap<BookDto, BookResponse>();
+        CreateMap<CreateBookRequest, CreateBookCommand>();
     }
 }

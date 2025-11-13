@@ -42,7 +42,8 @@ public class BookService : IBookService
         await _bookRepository.AddAsync(newBook);
         await _bookRepository.SaveAsync();
 
-        var newBookDto = _mapper.Map<BookDto>(newBook);
+        var detailedBook = await _bookRepository.GetDetailedBookInfo(newBook.BookId);
+        var newBookDto = _mapper.Map<BookDto>(detailedBook);
 
         return newBookDto;
     }
