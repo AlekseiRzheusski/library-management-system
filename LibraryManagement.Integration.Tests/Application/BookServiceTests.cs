@@ -36,7 +36,7 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
         using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
             var service = _fixture.Container.GetInstance<IBookService>();
-            var result = await service.GetBookAsync(10);
+            var result = await service.GetBookAsync(100);
 
             Assert.Null(result);
         }
@@ -86,10 +86,36 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
                 PageCount = 1152
             };
 
-            await Assert.ThrowsAsync<ValidationException>(async () =>
+            var ex = await Assert.ThrowsAsync<ValidationException>(async () =>
             {
                 var resultBookDto = await service.CreateBookAsync(createBookCommand);
             });
+            Assert.Equal("Author with such Id doesn't exist; This date cannot be parsed", ex.Message);
+        }
+    }
+
+    [Fact]
+    public async Task CreateBookAsync_WhenCreateBookCommandHasEmptyPublishedDate_ShouldAdd()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBookService>();
+
+            var createBookCommand = new CreateBookCommand
+            {
+                Title = "Plays: Ivanov; The Seagull; Uncle Vanya; Three Sisters; The CherryOrchard (Penguin Classics)",
+                Isbn = "9780140447330",
+                Description = "Five masterful dramatic works from one of the world's best-loved playwrights, including The Seagull—now a major motion picture starring Saoirse Ronan, Elizabeth Moss, and Annette Bening",
+                AuthorId = 4,
+                CategoryId = 5,
+                PublishedDate = "",
+                PageCount = 1152
+            };
+
+            var resultBookDto = await service.CreateBookAsync(createBookCommand);
+
+            Assert.NotNull(resultBookDto);
+            Assert.Empty(resultBookDto.PublishedDate!);
         }
     }
 }
