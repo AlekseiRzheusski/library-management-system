@@ -4,6 +4,7 @@ using LibraryManagement.Application.Services.Interaces;
 using LibraryManagement.Integration.Tests.Fixtures;
 using LibraryManagement.Application.Services.DTOs.BookModels;
 using FluentValidation;
+using LibraryManagement.Shared.Exceptions;
 
 namespace LibraryManagement.Integration.Tests.Application;
 
@@ -118,6 +119,33 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
 
             Assert.NotNull(resultBookDto);
             Assert.Empty(resultBookDto.PublishedDate!);
+        }
+    }
+
+    [Fact]
+    public async Task DeleteBookAsync_WhenIdExists_ShouldDelete()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBookService>();
+
+            await service.DeleteBookAsync(5);
+
+            var result = await service.GetBookAsync(5);
+            Assert.Null(result);
+        }
+    }
+
+    [Fact]
+    public async Task DeleteBookAsync_WhenIdDoesNotExist_ShouldThrow()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBookService>();
+            await Assert.ThrowsAsync<IdNotFoundInDatabaseException>(async () =>
+            {
+                await service.DeleteBookAsync(100);
+            });
         }
     }
 }
