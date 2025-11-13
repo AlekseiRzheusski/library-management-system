@@ -4,10 +4,21 @@ package librarymanagement;
 
 service BookService {
     rpc GetBook(BookGetRequest) returns (BookGetResponse);
+    rpc CreateBook(CreateBookRequest) returns (BookResponse);
 }
 
 message BookGetRequest {
   int64 book_id = 1;
+}
+
+message CreateBookRequest {
+  string title = 1;
+  string isbn = 2;
+  string description = 3;
+  int64 author_id = 4;
+  int64 category_id = 5;
+  string published_date = 6; // ISO 8601 format
+  int32 page_count = 7;
 }
 
 message BookResponse {

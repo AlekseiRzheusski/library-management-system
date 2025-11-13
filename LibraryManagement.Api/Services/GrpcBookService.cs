@@ -1,4 +1,5 @@
 using AutoMapper;
+using FluentValidation;
 using Grpc.Core;
 
 using Librarymanagement;
@@ -26,5 +27,23 @@ public class GrpcBookService : BookService.BookServiceBase
         { 
             Book = _mapper.Map<BookResponse>(book) 
         };
+    }
+
+    public override async Task<BookResponse> CreateBook(CreateBookRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var createBookCommand = _mapper.Map<CreateBookCommand>(request);
+            var resultBookDto = await _bookService.CreateBookAsync(createBookCommand);
+            return _mapper.Map<BookResponse>(resultBookDto);
+        }
+        catch (ValidationException ex)
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+        }
+        catch
+        {
+            throw new RpcException(new Status(StatusCode.Internal, "Internal issue"));
+        }
     }
 }
