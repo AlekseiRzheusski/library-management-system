@@ -8,6 +8,7 @@ using LibraryManagement.Application.Services.Interaces;
 using FluentValidation;
 using LibraryManagement.Application.Services.DTOs.BookModels;
 using LibraryManagement.Application.Validation;
+using LibraryManagement.Domain.Entities;
 
 namespace LibraryManagement.Application;
 
@@ -18,5 +19,7 @@ public static class DependencyInjection
         container.Register<IBookService, BookService>(Lifestyle.Scoped);
 
         container.Register<IValidator<CreateBookCommand>, CreateBookCommandValidator>(Lifestyle.Scoped);
+        container.Register<IValidator<SearchBookCommand>, SearchBookCommandValidator>(Lifestyle.Scoped);
+        container.Register(typeof(ISearchService<>), typeof(SearchService<>), Lifestyle.Singleton);
     }
 }

@@ -1,6 +1,9 @@
+using System.Linq.Expressions;
+
 using LibraryManagement.Domain.Entities;
 using LibraryManagement.Infrastructure.Data;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Infrastructure.Repositories;
 
@@ -16,5 +19,15 @@ public class BookRepository : BaseRepository<Book>, IBookRepository
         await _context.Entry(book).Reference(b => b.Author).LoadAsync();
         await _context.Entry(book).Reference(b => b.Category).LoadAsync();
         return book;
+    }
+
+    public async Task<IEnumerable<Book>> FindBooksAsync(Expression<Func<Book, bool>> predicate)
+    {
+        return await _dbSet
+            .Where(predicate)
+            .Include(b=>b.Author)
+            .Include(b=>b.Category)
+            .AsNoTracking()
+            .ToListAsync();
     }
 }

@@ -56,7 +56,7 @@ public class GrpcBookService : BookService.BookServiceBase
             await _bookService.DeleteBookAsync(request.BookId);
             return new DeleteResponse {Message = $"{request.BookId} was successfully deleted."};
         }
-        catch (IdNotFoundInDatabaseException ex)
+        catch (EntityNotFoundException ex)
         {
             throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
         }
