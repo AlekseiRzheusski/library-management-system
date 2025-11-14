@@ -54,7 +54,7 @@ public class BookService : IBookService
         var book = await _bookRepository.GetDetailedBookInfo(bookId);
         if (book is null)
         {
-            throw new IdNotFoundInDatabaseException($"BookId: {bookId}, doesn't exist");
+            throw new IdNotFoundInDatabaseException($"Book with ID {bookId} does not exist");
         }
 
         _bookRepository.Delete(book);
