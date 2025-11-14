@@ -1,3 +1,4 @@
+using System.Data;
 using AutoMapper;
 using FluentValidation;
 using Grpc.Core;
@@ -5,6 +6,7 @@ using Grpc.Core;
 using Librarymanagement;
 using LibraryManagement.Application.Services.DTOs.BookModels;
 using LibraryManagement.Application.Services.Interaces;
+using LibraryManagement.Shared.Exceptions;
 
 namespace LibraryManagement.Api.Services;
 
@@ -40,6 +42,23 @@ public class GrpcBookService : BookService.BookServiceBase
         catch (ValidationException ex)
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+        }
+        catch
+        {
+            throw new RpcException(new Status(StatusCode.Internal, "Internal issue"));
+        }
+    }
+
+    public override async Task<DeleteResponse> DeleteBook(BookDeleteRequest request, ServerCallContext context)
+    {
+        try
+        {
+            await _bookService.DeleteBookAsync(request.BookId);
+            return new DeleteResponse {Message = $"{request.BookId} was successfully deleted."};
+        }
+        catch (IdNotFoundInDatabaseException ex)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
         }
         catch
         {
