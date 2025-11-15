@@ -13,15 +13,21 @@ public class BookService : IBookService
     private readonly IBookRepository _bookRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<CreateBookCommand> _createBookCommandValidator;
+    private readonly IValidator<SearchBookCommand> _searchBookCommandValidator;
+    private readonly ISearchService<Book> _bookSearchService;
 
     public BookService(
         IBookRepository bookRepository,
         IMapper mapper,
-        IValidator<CreateBookCommand> createBookCommandValidator)
+        IValidator<CreateBookCommand> createBookCommandValidator,
+        IValidator<SearchBookCommand> searchBookCommandValidator,
+        ISearchService<Book> bookSearchService)
     {
         _bookRepository = bookRepository;
         _mapper = mapper;
         _createBookCommandValidator = createBookCommandValidator;
+        _searchBookCommandValidator = searchBookCommandValidator;
+        _bookSearchService = bookSearchService;
     }
 
     public async Task<BookDto?> GetBookAsync(long bookId)
@@ -54,10 +60,30 @@ public class BookService : IBookService
         var book = await _bookRepository.GetDetailedBookInfo(bookId);
         if (book is null)
         {
-            throw new IdNotFoundInDatabaseException($"Book with ID {bookId} does not exist");
+            throw new EntityNotFoundException($"Book with ID {bookId} does not exist");
         }
 
         _bookRepository.Delete(book);
         await _bookRepository.SaveAsync();
+    }
+
+    public async Task<IEnumerable<BookDto>> GetBooksAsync(SearchBookCommand command)
+    {
+        var validation = await _searchBookCommandValidator.ValidateAsync(command);
+        if (!validation.IsValid)
+        {
+            var message = string.Join("; ", validation.Errors.Select(e => e.ErrorMessage));
+            throw new ValidationException(message);
+        }
+
+        var expression = _bookSearchService.BuildExpression<SearchBookCommand>(command);
+        var result = await _bookRepository.FindBooksAsync(expression);
+        if (!result.Any())
+        {
+            throw new EntityNotFoundException("No results match your search criteria.");
+        }
+
+        var resultDto = _mapper.Map<IEnumerable<BookDto>>(result);
+        return resultDto;
     }
 }
