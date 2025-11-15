@@ -142,9 +142,68 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
         using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
             var service = _fixture.Container.GetInstance<IBookService>();
-            await Assert.ThrowsAsync<IdNotFoundInDatabaseException>(async () =>
+            await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
             {
                 await service.DeleteBookAsync(100);
+            });
+        }
+    }
+
+    [Fact]
+    public async Task GetBooksAsync_WhenBooksExist_ShouldReturnEnumerable()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBookService>();
+            var bookSearchDto = new SearchBookCommand
+            {
+                Title = "A ",
+                AuthorId = 4,
+                CategoryId = 6,
+                ISBN = "978"
+            };
+
+            var result = await service.GetBooksAsync(bookSearchDto);
+
+            Assert.NotEmpty(result);
+        }
+    }
+
+    [Fact]
+    public async Task GetBooksAsync_WhenBooksDoesNotExist_ShouldThrow()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBookService>();
+            var bookSearchDto = new SearchBookCommand
+            {
+                Title = "A ",
+                AuthorId = 4,
+                CategoryId = 6,
+                ISBN = "444444444"
+            };
+
+            await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+            {
+                var result = await service.GetBooksAsync(bookSearchDto);
+            });
+        }
+    }
+
+    [Fact]
+    public async Task GetBooksAsync_WhenDateIsIncorrect_ShouldThrow()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBookService>();
+            var bookSearchDto = new SearchBookCommand
+            {
+                PublishedDate = "10-10"
+            };
+
+            await Assert.ThrowsAsync<ValidationException>(async () =>
+            {
+                var result = await service.GetBooksAsync(bookSearchDto);
             });
         }
     }
