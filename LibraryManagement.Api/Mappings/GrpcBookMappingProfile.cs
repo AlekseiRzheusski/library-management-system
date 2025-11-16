@@ -11,5 +11,6 @@ public class GrpcBookMappingProfile : Profile
     {
         CreateMap<BookDto, BookResponse>();
         CreateMap<CreateBookRequest, CreateBookCommand>();
+        CreateMap<BookSearchRequest, SearchBookCommand>();
     }
 }

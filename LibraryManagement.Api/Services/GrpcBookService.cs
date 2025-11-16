@@ -65,4 +65,46 @@ public class GrpcBookService : BookService.BookServiceBase
             throw new RpcException(new Status(StatusCode.Internal, "Internal issue"));
         }
     }
+
+    public override async Task<BookListResponse> GetBooks(BookSearchRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var searchBookCommand = _mapper.Map<SearchBookCommand>(request);
+            var pageNumber = request.PageNumber;
+            var pageSize = request.PageSize;
+
+            var (totalCount, numberOfPages, searchResultDtos) = await _bookService.GetBooksAsync(searchBookCommand,pageSize,pageNumber);
+            var searchResult = _mapper.Map<IEnumerable<BookResponse>>(searchResultDtos);
+
+
+            var response = new BookListResponse
+            {
+                TotalCount = totalCount,
+                NumberOfPages = numberOfPages,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+
+            response.Books.AddRange(searchResult);
+
+            return response;
+        }
+        catch (ValidationException ex)
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+        }
+        catch (IndexOutOfRangeException ex)
+        {
+            throw new RpcException(new Status(StatusCode.OutOfRange, ex.Message));
+        }
+        catch (EntityNotFoundException ex)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+        }
+        catch
+        {
+            throw new RpcException(new Status(StatusCode.Internal, "Internal issue"));
+        }
+    }
 }
