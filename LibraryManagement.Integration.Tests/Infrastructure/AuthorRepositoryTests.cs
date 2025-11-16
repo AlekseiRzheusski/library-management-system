@@ -91,7 +91,7 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
             var resultEntity = resultList.First();
             Assert.Equal(author.FirstName, resultEntity.FirstName);
             Assert.Equal(author.DateOfBirth, resultEntity.DateOfBirth);
-            Assert.Equal(6, resultEntity.AuthorId);
+            Assert.Equal(author.AuthorId, resultEntity.AuthorId);
         }
     }
 

@@ -30,7 +30,7 @@ public class SearchServiceTests : IClassFixture<SqliteTestDatabaseFixture>
         Assert.NotNull(expression);
 
         var strExpression = expression.ToString();
-        Console.WriteLine(strExpression);
+
         Assert.Contains("(e.Title.Contains(\"Alex\")", strExpression);
         Assert.Contains("e.ISBN.Contains(\"97\")", strExpression);
         Assert.Contains("(e.AuthorId == 1)", strExpression);

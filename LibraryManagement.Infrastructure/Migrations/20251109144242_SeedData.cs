@@ -61,6 +61,14 @@ namespace LibraryManagement.Infrastructure.Migrations
                         "Was a Russian playwright and short-story writer, widely considered to be one of the greatest writers of all time.",
                         new DateTime(1860,1,29),
                         false
+                    },
+                    {
+                        6,
+                        "Empty",
+                        "Author",
+                        "this is author entity for books without one, or test book entities",
+                        new DateTime(1860,1,29),
+                        true
                     }
                 }
             );
@@ -238,6 +246,78 @@ namespace LibraryManagement.Infrastructure.Migrations
                         5,
                         5,
                         new DateTime(2004,8,3),
+                        600,
+                        true,
+                        DateTime.UtcNow
+                    },
+                    {
+                        9,
+                        "Book1",
+                        "9781400040491",
+                        "Test book 1",
+                        6,
+                        5,
+                        new DateTime(2004,8,3),
+                        600,
+                        true,
+                        DateTime.UtcNow
+                    },
+                    {
+                        10,
+                        "Book2",
+                        "9781400040492",
+                        "Test book 2",
+                        6,
+                        5,
+                        new DateTime(2004,8,3),
+                        600,
+                        true,
+                        DateTime.UtcNow
+                    },
+                    {
+                        11,
+                        "Book3",
+                        "9781400040493",
+                        "Test book 3",
+                        6,
+                        5,
+                        new DateTime(2004,8,3),
+                        600,
+                        true,
+                        DateTime.UtcNow
+                    },
+                    {
+                        12,
+                        "Book4",
+                        "9781400040494",
+                        "Test book 4",
+                        6,
+                        5,
+                        new DateTime(2004,8,3),
+                        600,
+                        true,
+                        DateTime.UtcNow
+                    },
+                    {
+                        13,
+                        "Book5",
+                        "9781400040495",
+                        "Test book 5",
+                        6,
+                        5,
+                        new DateTime(2006,9,4),
+                        600,
+                        true,
+                        DateTime.UtcNow
+                    },
+                    {
+                        14,
+                        "Book6",
+                        "9781400040496",
+                        "Test book 6",
+                        6,
+                        5,
+                        new DateTime(2006,9,4),
                         600,
                         true,
                         DateTime.UtcNow

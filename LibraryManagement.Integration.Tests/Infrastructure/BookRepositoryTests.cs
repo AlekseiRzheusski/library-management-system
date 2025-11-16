@@ -39,7 +39,7 @@ public class BookRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
 
             Expression<Func<Book, bool>> expression = b => b.ISBN.Contains("978030781") && b.AuthorId == 1;
 
-            var resultList = await repository.FindBooksAsync(expression);
+            var resultList = await repository.FindBooksAsync(expression, 100, 1);
 
             Assert.Single(resultList);
             var resultEntity = resultList.First();

@@ -150,22 +150,58 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
     }
 
     [Fact]
-    public async Task GetBooksAsync_WhenBooksExist_ShouldReturnEnumerable()
+    public async Task GetBooksAsync_WhenPageIsFull_ShouldReturnPage()
     {
         using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
             var service = _fixture.Container.GetInstance<IBookService>();
             var bookSearchDto = new SearchBookCommand
             {
-                Title = "A ",
-                AuthorId = 4,
-                CategoryId = 6,
-                ISBN = "978"
+                Title = "Book",
+                ISBN = "97814000404"
             };
 
-            var result = await service.GetBooksAsync(bookSearchDto);
+            var result = await service.GetBooksAsync(bookSearchDto, 2, 1);
 
             Assert.NotEmpty(result);
+            Assert.Equal(2, result.Count());
+        }
+    }
+
+    [Fact]
+    public async Task GetBooksAsync_WhenPageIsNotFull_ShouldReturnPage()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBookService>();
+            var bookSearchDto = new SearchBookCommand
+            {
+                Title = "Book",
+                ISBN = "97814000404"
+            };
+
+            var result = await service.GetBooksAsync(bookSearchDto, 4, 2);
+
+            Assert.NotEmpty(result);
+            Assert.Equal(2, result.Count());
+        }
+    }
+
+    [Fact]
+    public async Task GetBooksAsync_WhenPageOutOfRange_ShouldReturnPage()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBookService>();
+            var bookSearchDto = new SearchBookCommand
+            {
+                Title = "Book",
+                ISBN = "97814000404"
+            };
+            await Assert.ThrowsAsync<IndexOutOfRangeException>(async () =>
+            {
+                var result = await service.GetBooksAsync(bookSearchDto, 4, 6);
+            });
         }
     }
 
@@ -185,7 +221,7 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
 
             await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
             {
-                var result = await service.GetBooksAsync(bookSearchDto);
+                var result = await service.GetBooksAsync(bookSearchDto, 100, 1);
             });
         }
     }
@@ -203,7 +239,7 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
 
             await Assert.ThrowsAsync<ValidationException>(async () =>
             {
-                var result = await service.GetBooksAsync(bookSearchDto);
+                var result = await service.GetBooksAsync(bookSearchDto, 100, 1);
             });
         }
     }
