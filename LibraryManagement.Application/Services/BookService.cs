@@ -67,7 +67,7 @@ public class BookService : IBookService
         await _bookRepository.SaveAsync();
     }
 
-    public async Task<IEnumerable<BookDto>> GetBooksAsync(SearchBookCommand command)
+    public async Task<IEnumerable<BookDto>> GetBooksAsync(SearchBookCommand command, int pageSize, int pageNumber)
     {
         var validation = await _searchBookCommandValidator.ValidateAsync(command);
         if (!validation.IsValid)
@@ -76,8 +76,15 @@ public class BookService : IBookService
             throw new ValidationException(message);
         }
 
+        var totalCount = await _bookRepository.CountAsync();
+        var maxPageNumber = (int)Math.Ceiling((double)totalCount / pageSize);
+
+        if (totalCount > 0 && (pageNumber < 0 || pageNumber > maxPageNumber))
+            throw new IndexOutOfRangeException($"Page number must not exceed {maxPageNumber}");
+
         var expression = _bookSearchService.BuildExpression<SearchBookCommand>(command);
-        var result = await _bookRepository.FindBooksAsync(expression);
+        var result = await _bookRepository.FindBooksAsync(expression, pageSize, pageNumber);
+
         if (!result.Any())
         {
             throw new EntityNotFoundException("No results match your search criteria.");

@@ -21,12 +21,14 @@ public class BookRepository : BaseRepository<Book>, IBookRepository
         return book;
     }
 
-    public async Task<IEnumerable<Book>> FindBooksAsync(Expression<Func<Book, bool>> predicate)
+    public async Task<IEnumerable<Book>> FindBooksAsync(Expression<Func<Book, bool>> predicate, int pageSize, int pageNumber)
     {
         return await _dbSet
             .Where(predicate)
             .Include(b=>b.Author)
             .Include(b=>b.Category)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .AsNoTracking()
             .ToListAsync();
     }
