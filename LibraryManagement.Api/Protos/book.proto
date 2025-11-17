@@ -2,10 +2,26 @@ syntax = "proto3";
 
 package librarymanagement;
 
+import "google/protobuf/wrappers.proto";
+
 service BookService {
-    rpc GetBook(BookGetRequest) returns (BookGetResponse);
-    rpc CreateBook(CreateBookRequest) returns (BookResponse);
-    rpc DeleteBook(BookDeleteRequest) returns (DeleteResponse);
+  rpc GetBook(BookGetRequest) returns (BookGetResponse);
+  rpc CreateBook(CreateBookRequest) returns (BookResponse);
+  rpc DeleteBook(BookDeleteRequest) returns (DeleteResponse);
+  rpc GetBooks(BookSearchRequest) returns (BookListResponse);
+}
+
+message BookSearchRequest {
+  google.protobuf.StringValue title = 1;
+  google.protobuf.StringValue isbn = 2;
+  google.protobuf.StringValue description = 3;
+  google.protobuf.Int64Value author_id = 4;
+  google.protobuf.Int64Value category_id = 5;
+  google.protobuf.StringValue published_date = 6; // ISO 8601 format
+  google.protobuf.Int32Value page_count = 7;
+  google.protobuf.BoolValue is_available = 11;
+  int32 page_number = 12;
+  int32 page_size = 13;
 }
 
 message BookGetRequest {
@@ -42,6 +58,14 @@ message BookResponse {
 
 message BookGetResponse {
   BookResponse book = 1;
+}
+
+message BookListResponse {
+  repeated BookResponse books = 1;
+  int32 total_count = 2;
+  int32 number_of_pages = 3;
+  int32 page_number = 4;
+  int32 page_size = 5;
 }
 
 //istead of bool, use status codes

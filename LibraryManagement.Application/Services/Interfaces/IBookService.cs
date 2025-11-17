@@ -7,5 +7,5 @@ public interface IBookService
     Task<BookDto?> GetBookAsync(long bookId);
     Task<BookDto?> CreateBookAsync(CreateBookCommand command);
     Task DeleteBookAsync(long bookId);
-    Task<IEnumerable<BookDto>> GetBooksAsync(SearchBookCommand command, int pageSize, int pageNumber);
+    Task<(int totalCount, int numberOfPages, IEnumerable<BookDto> searchResultPage)> GetBooksAsync(SearchBookCommand command, int pageSize, int pageNumber);
 }

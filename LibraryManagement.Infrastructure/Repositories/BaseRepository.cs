@@ -56,6 +56,11 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class
         return await _dbSet.CountAsync();
     }
 
+    public async Task<int> GetQueryCountAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.Where(predicate).CountAsync();
+    }
+
     public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
     {
         return await _dbSet.AnyAsync(predicate, cancellationToken);
