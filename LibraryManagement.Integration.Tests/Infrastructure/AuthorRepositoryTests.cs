@@ -224,4 +224,17 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
                 await repository.ExistsAsync(a => a.FirstName == "Anton", token));
         }
     }
+
+    [Fact]
+    public async Task GetQueryCountAsync_WhenEntitiesExists_ShouldReturnCount()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var repository = _fixture.Container.GetInstance<IAuthorRepository>();
+
+            int result = await repository.GetQueryCountAsync(a=>a.FirstName=="Empty");
+
+            Assert.Equal(1, result);
+        }
+    }
 }

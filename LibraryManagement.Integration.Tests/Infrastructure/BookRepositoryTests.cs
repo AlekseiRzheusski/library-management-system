@@ -21,7 +21,7 @@ public class BookRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
         using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
             var repository = _fixture.Container.GetInstance<IBookRepository>();
-            var result = await repository.GetDetailedBookInfo(2);
+            var result = await repository.GetDetailedBookInfoAsync(2);
             Assert.NotNull(result);
             Assert.Equal(2, result.BookId);
             Assert.Equal("Structured computer architecture", result.Title);

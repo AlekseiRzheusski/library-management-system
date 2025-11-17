@@ -14,7 +14,7 @@ public class SearchServiceTests : IClassFixture<SqliteTestDatabaseFixture>
     }
 
     [Fact]
-    public async Task ExpressionBuilder_ReturnsCorrectExpression()
+    public void ExpressionBuilder_ReturnsCorrectExpression()
     {
         var searchService = _fixture.Container.GetInstance<ISearchService<Book>>();
 
