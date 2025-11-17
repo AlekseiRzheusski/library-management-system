@@ -33,8 +33,12 @@ public class BookService : IBookService
 
     public async Task<BookDto?> GetBookAsync(long bookId)
     {
-        var book = await _bookRepository.GetDetailedBookInfo(bookId);
-        return book == null ? null : _mapper.Map<BookDto>(book);
+        var book = await _bookRepository.GetDetailedBookInfoAsync(bookId);
+        if (book == null)
+        {
+            throw new EntityNotFoundException($"Book with ID {bookId} does not exist");
+        }
+        return _mapper.Map<BookDto>(book);
     }
 
     public async Task<BookDto?>CreateBookAsync(CreateBookCommand command)
@@ -50,7 +54,7 @@ public class BookService : IBookService
         await _bookRepository.AddAsync(newBook);
         await _bookRepository.SaveAsync();
 
-        var detailedBook = await _bookRepository.GetDetailedBookInfo(newBook.BookId);
+        var detailedBook = await _bookRepository.GetDetailedBookInfoAsync(newBook.BookId);
         var newBookDto = _mapper.Map<BookDto>(detailedBook);
 
         return newBookDto;
@@ -58,7 +62,7 @@ public class BookService : IBookService
 
     public async Task DeleteBookAsync(long bookId)
     {
-        var book = await _bookRepository.GetDetailedBookInfo(bookId);
+        var book = await _bookRepository.GetDetailedBookInfoAsync(bookId);
         if (book is null)
         {
             throw new EntityNotFoundException($"Book with ID {bookId} does not exist");
