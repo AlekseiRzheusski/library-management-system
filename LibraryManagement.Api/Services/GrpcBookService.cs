@@ -22,13 +22,22 @@ public class GrpcBookService : BookService.BookServiceBase
 
     public override async Task<BookGetResponse> GetBook(BookGetRequest request, ServerCallContext context)
     {
-        var book = await _bookService.GetBookAsync(request.BookId);
-        if (book == null)
-            throw new RpcException(new Status(StatusCode.NotFound, "Book not found"));
-        return new BookGetResponse 
-        { 
-            Book = _mapper.Map<BookResponse>(book) 
-        };
+        try
+        {
+            var book = await _bookService.GetBookAsync(request.BookId);
+            return new BookGetResponse 
+            { 
+                Book = _mapper.Map<BookResponse>(book) 
+            };
+        }
+        catch (EntityNotFoundException ex)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+        }
+        catch
+        {
+            throw new RpcException(new Status(StatusCode.Internal, "Internal issue"));
+        }
     }
 
     public override async Task<BookResponse> CreateBook(CreateBookRequest request, ServerCallContext context)

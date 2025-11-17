@@ -11,7 +11,7 @@ public class BookRepository : BaseRepository<Book>, IBookRepository
 {
     public BookRepository(LibraryDbContext context) : base(context) { }
 
-    public async Task<Book?> GetDetailedBookInfo(long id)
+    public async Task<Book?> GetDetailedBookInfoAsync(long id)
     {
         var book = await _dbSet.FindAsync(id);
         if (book == null) return null;
