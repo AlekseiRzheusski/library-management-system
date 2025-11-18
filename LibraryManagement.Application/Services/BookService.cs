@@ -15,6 +15,7 @@ public class BookService : IBookService
     private readonly IMapper _mapper;
     private readonly IValidator<CreateBookCommand> _createBookCommandValidator;
     private readonly IValidator<SearchBookCommand> _searchBookCommandValidator;
+    private readonly IValidator<UpdateBookCommand> _updateBookCommandValidator;
     private readonly ISearchService<Book> _bookSearchService;
 
     public BookService(
@@ -22,12 +23,14 @@ public class BookService : IBookService
         IMapper mapper,
         IValidator<CreateBookCommand> createBookCommandValidator,
         IValidator<SearchBookCommand> searchBookCommandValidator,
+        IValidator<UpdateBookCommand> updateBookCommandValidator,
         ISearchService<Book> bookSearchService)
     {
         _bookRepository = bookRepository;
         _mapper = mapper;
         _createBookCommandValidator = createBookCommandValidator;
         _searchBookCommandValidator = searchBookCommandValidator;
+        _updateBookCommandValidator = updateBookCommandValidator;
         _bookSearchService = bookSearchService;
     }
 
@@ -98,5 +101,28 @@ public class BookService : IBookService
 
         var resultDtoPage = _mapper.Map<IEnumerable<BookDto>>(resultPage);
         return (totalCount, maxPageNumber, resultDtoPage);
+    }
+
+    public async Task<BookDto> UpdateBookAsync(UpdateBookCommand command, long bookId)
+    {
+        var validation = await _updateBookCommandValidator.ValidateAsync(command);
+        if (!validation.IsValid)
+        {
+            var message = string.Join("; ", validation.Errors.Select(e => e.ErrorMessage));
+            throw new ValidationException(message);
+        }
+
+        var book = await _bookRepository.GetByIdAsync(bookId);
+        if (book is null)
+        {
+            throw new EntityNotFoundException("No results match your search criteria.");
+        }
+
+        _mapper.Map(command, book);
+        await _bookRepository.SaveAsync();
+
+        var detailedBook = await _bookRepository.GetDetailedBookInfoAsync(bookId);
+
+        return _mapper.Map<BookDto>(detailedBook);
     }
 }

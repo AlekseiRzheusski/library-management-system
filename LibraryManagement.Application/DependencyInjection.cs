@@ -21,5 +21,6 @@ public static class DependencyInjection
         container.Register<IValidator<CreateBookCommand>, CreateBookCommandValidator>(Lifestyle.Scoped);
         container.Register<IValidator<SearchBookCommand>, SearchBookCommandValidator>(Lifestyle.Scoped);
         container.Register(typeof(ISearchService<>), typeof(SearchService<>), Lifestyle.Singleton);
+        container.Register<IValidator<UpdateBookCommand>, UpdateBookCommandValidator>(Lifestyle.Scoped);
     }
 }
