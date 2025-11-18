@@ -30,6 +30,14 @@ public class BookMappingProfile : Profile
 
         CreateMap<CreateBookCommand, Book>()
             .ForMember(dest => dest.PublishedDate,
-            opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.PublishedDate) ? DateTime.Parse(src.PublishedDate) : (DateTime?)null));
+                opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.PublishedDate) ? DateTime.Parse(src.PublishedDate) : (DateTime?)null));
+
+        CreateMap<UpdateBookCommand, Book>()
+            .ForMember(dest => dest.PublishedDate,
+                opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.PublishedDate) ? DateTime.Parse(src.PublishedDate) : (DateTime?)null))
+            .ForMember(dest => dest.CategoryId,
+                opt => opt.MapFrom((src, dest) => src.CategoryId ?? dest.CategoryId))
+            .ForAllMembers(
+                opt =>opt.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

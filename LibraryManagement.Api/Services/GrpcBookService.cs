@@ -34,9 +34,9 @@ public class GrpcBookService : BookService.BookServiceBase
         {
             throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
         }
-        catch
+        catch (Exception ex)
         {
-            throw new RpcException(new Status(StatusCode.Internal, "Internal issue"));
+            throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
 
@@ -52,9 +52,9 @@ public class GrpcBookService : BookService.BookServiceBase
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
         }
-        catch
+        catch (Exception ex)
         {
-            throw new RpcException(new Status(StatusCode.Internal, "Internal issue"));
+            throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
 
@@ -69,9 +69,9 @@ public class GrpcBookService : BookService.BookServiceBase
         {
             throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
         }
-        catch
+        catch (Exception ex)
         {
-            throw new RpcException(new Status(StatusCode.Internal, "Internal issue"));
+            throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
 
@@ -111,9 +111,33 @@ public class GrpcBookService : BookService.BookServiceBase
         {
             throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
         }
-        catch
+        catch (Exception ex)
         {
-            throw new RpcException(new Status(StatusCode.Internal, "Internal issue"));
+            throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+        }
+    }
+
+    public override async Task<BookResponse> UpdateBook(UpdateBookRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var updateBookCommand = _mapper.Map<UpdateBookCommand>(request);
+            long bookId = request.BookId;
+
+            var updatedBookDto = await _bookService.UpdateBookAsync(updateBookCommand, bookId);
+            return _mapper.Map<BookResponse>(updatedBookDto);
+        }
+        catch (ValidationException ex)
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+        }
+        catch (EntityNotFoundException ex)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
 }

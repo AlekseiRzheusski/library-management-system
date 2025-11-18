@@ -9,6 +9,16 @@ service BookService {
   rpc CreateBook(CreateBookRequest) returns (BookResponse);
   rpc DeleteBook(BookDeleteRequest) returns (DeleteResponse);
   rpc GetBooks(BookSearchRequest) returns (BookListResponse);
+  rpc UpdateBook(UpdateBookRequest) returns (BookResponse);
+}
+
+message UpdateBookRequest {
+  int64 book_id = 1;
+  google.protobuf.StringValue title = 2;
+  google.protobuf.StringValue description = 3;
+  google.protobuf.Int64Value category_id = 4;
+  google.protobuf.StringValue published_date = 5;
+  google.protobuf.Int32Value page_count = 6;
 }
 
 message BookSearchRequest {
