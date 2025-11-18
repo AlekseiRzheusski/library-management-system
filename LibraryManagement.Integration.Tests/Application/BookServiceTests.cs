@@ -248,4 +248,49 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
             });
         }
     }
+
+    [Fact]
+    public async Task UpdateBookAsync_WhenBookExists_ShouldUpdate()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBookService>();
+            var updateBookCommand = new UpdateBookCommand
+            {
+                Title = "Programming Book",
+                PublishedDate = "2002-10-12",
+                CategoryId = 4,
+                PageCount = 128
+            };
+
+            var result = await service.UpdateBookAsync(updateBookCommand, 1);
+
+            Assert.Equal(updateBookCommand.Title, result.Title);
+            Assert.Equal(updateBookCommand.CategoryId, result.CategoryId);
+            Assert.Equal(updateBookCommand.PublishedDate, result.PublishedDate);
+            Assert.Equal(updateBookCommand.PageCount, result.PageCount);
+        }
+    }
+
+    [Fact]
+    public async Task UpdateBookAsync_WhenCommandIsInvalid_ShouldThrow()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBookService>();
+            var updateBookCommand = new UpdateBookCommand
+            {
+                PublishedDate = "202-12",
+                CategoryId = 100,
+                PageCount = -128
+            };
+
+            var ex = await Assert.ThrowsAsync<ValidationException>(async () =>
+            {
+                var result = await service.UpdateBookAsync(updateBookCommand, 1);
+            });
+
+            Assert.Equal("Category with such Id doesn't exist.; Page number must be greater than 0; This date cannot be parsed", ex.Message);
+        }
+    }
 }

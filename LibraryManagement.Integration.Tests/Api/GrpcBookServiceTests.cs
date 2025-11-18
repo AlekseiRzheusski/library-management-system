@@ -12,6 +12,8 @@ using LibraryManagement.Shared.Exceptions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
+namespace LibraryManagement.Integration.Tests.Api;
+
 public class GrpcBookServiceTests
 {
     private readonly Mock<IBookService> _bookServiceMock;
@@ -301,5 +303,72 @@ public class GrpcBookServiceTests
             _grpcBookService.GetBooks(request, context));
 
         Assert.Equal(StatusCode.NotFound, ex.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateBook_WhenRequestIsCorrect_ShouldReturnDto()
+    {
+        var request = new UpdateBookRequest
+        {
+            BookId = 1, 
+            Title = "Test Book", 
+            PublishedDate = "2021-10-19",
+            PageCount = 12,
+        };
+        var book = new BookDto
+        {
+            BookId = 1, 
+            Title = "Test Book", 
+            Isbn = "1234567890123",
+            Description = "",
+            AuthorId = 1,
+            AuthorName = "Test Author",
+            CategoryId = 1,
+            CategoryName = "Test Category",
+            PublishedDate = "2021-10-19",
+            PageCount = 12,
+            IsAvailable = true
+        };
+
+        _bookServiceMock.Setup(s => 
+            s.UpdateBookAsync(
+                It.IsAny<UpdateBookCommand>(), 
+                request.BookId))
+            .ReturnsAsync(book);
+        
+        var context = Mock.Of<ServerCallContext>();
+
+        var result = await _grpcBookService.UpdateBook(request, context);
+
+        Assert.Equal(book.BookId, result.BookId);
+
+        _bookServiceMock.Verify(s =>
+            s.UpdateBookAsync(It.IsAny<UpdateBookCommand>(), request.BookId),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateBook_WhenRequestIsIncorrect_ShouldThrow()
+    {
+        var request = new UpdateBookRequest
+        {
+            BookId = 1, 
+            Title = "Test Book", 
+            PublishedDate = "2021-10-19",
+            PageCount = 12,
+        };
+
+        _bookServiceMock.Setup(s => 
+            s.UpdateBookAsync(
+                It.IsAny<UpdateBookCommand>(), 
+                It.IsAny<long>()))
+            .ThrowsAsync(new ValidationException("Category with such Id doesn't exist."));
+        
+        var context = Mock.Of<ServerCallContext>();
+
+        var ex = await Assert.ThrowsAsync<RpcException>(() =>
+            _grpcBookService.UpdateBook(request, context));
+
+        Assert.Equal(StatusCode.InvalidArgument, ex.StatusCode);
     }
 }
