@@ -32,14 +32,15 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
     }
 
     [Fact]
-    public async Task GetBookAsync_WhenIdDoesNotExist_ShouldReturnNull()
+    public async Task GetBookAsync_WhenIdDoesNotExist_ShouldThrow()
     {
         using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
             var service = _fixture.Container.GetInstance<IBookService>();
-            var result = await service.GetBookAsync(100);
-
-            Assert.Null(result);
+            await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+            {
+                var result = await service.GetBookAsync(100);
+            });
         }
     }
 
@@ -86,14 +87,14 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
                 AuthorId = 10,
                 CategoryId = 6,
                 PublishedDate = "10-10-10",
-                PageCount = 1152
+                PageCount = -1152
             };
 
             var ex = await Assert.ThrowsAsync<ValidationException>(async () =>
             {
                 var resultBookDto = await service.CreateBookAsync(createBookCommand);
             });
-            Assert.Equal("The ISBN should be unique; Author with such Id doesn't exist; This date cannot be parsed", ex.Message);
+            Assert.Equal("The ISBN should be unique; Author with such Id doesn't exist; Page number must be greater than 0; This date cannot be parsed", ex.Message);
         }
     }
 
@@ -131,8 +132,10 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
 
             await service.DeleteBookAsync(5);
 
-            var result = await service.GetBookAsync(5);
-            Assert.Null(result);
+            await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
+            {
+                var result = await service.GetBookAsync(5);
+            });
         }
     }
 
@@ -161,10 +164,11 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
                 ISBN = "97814000404"
             };
 
-            var result = await service.GetBooksAsync(bookSearchDto, 2, 1);
+            var (_, numberOfPages, searchResultDtos) = await service.GetBooksAsync(bookSearchDto, 2, 1);
 
-            Assert.NotEmpty(result);
-            Assert.Equal(2, result.Count());
+            Assert.NotEmpty(searchResultDtos);
+            Assert.Equal(2, searchResultDtos.Count());
+            Assert.Equal(3, numberOfPages);
         }
     }
 
@@ -180,10 +184,11 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
                 ISBN = "97814000404"
             };
 
-            var result = await service.GetBooksAsync(bookSearchDto, 4, 2);
+            var (_, numberOfPages, searchResultDtos) = await service.GetBooksAsync(bookSearchDto, 4, 2);
 
-            Assert.NotEmpty(result);
-            Assert.Equal(2, result.Count());
+            Assert.NotEmpty(searchResultDtos);
+            Assert.Equal(2, searchResultDtos.Count());
+            Assert.Equal(2, numberOfPages);
         }
     }
 
@@ -200,7 +205,7 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
             };
             await Assert.ThrowsAsync<IndexOutOfRangeException>(async () =>
             {
-                var result = await service.GetBooksAsync(bookSearchDto, 4, 6);
+                var (totalCount, numberOfPages, searchResultDtos) = await service.GetBooksAsync(bookSearchDto, 4, 6);
             });
         }
     }
@@ -221,7 +226,7 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
 
             await Assert.ThrowsAsync<EntityNotFoundException>(async () =>
             {
-                var result = await service.GetBooksAsync(bookSearchDto, 100, 1);
+                var (totalCount, numberOfPages, searchResultDtos) = await service.GetBooksAsync(bookSearchDto, 100, 1);
             });
         }
     }
@@ -239,7 +244,7 @@ public class BookServiceTests : IClassFixture<SqliteTestDatabaseFixture>
 
             await Assert.ThrowsAsync<ValidationException>(async () =>
             {
-                var result = await service.GetBooksAsync(bookSearchDto, 100, 1);
+                var (totalCount, numberOfPages, searchResultDtos) = await service.GetBooksAsync(bookSearchDto, 100, 1);
             });
         }
     }
