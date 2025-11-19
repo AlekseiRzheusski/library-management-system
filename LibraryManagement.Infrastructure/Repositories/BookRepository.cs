@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 using LibraryManagement.Domain.Entities;
 using LibraryManagement.Infrastructure.Data;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Infrastructure.Repositories;
 
@@ -25,8 +25,8 @@ public class BookRepository : BaseRepository<Book>, IBookRepository
     {
         return await _dbSet
             .Where(predicate)
-            .Include(b=>b.Author)
-            .Include(b=>b.Category)
+            .Include(b => b.Author)
+            .Include(b => b.Category)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .AsNoTracking()

@@ -1,5 +1,5 @@
 using AutoMapper;
-using System;
+
 using LibraryManagement.Domain.Entities;
 using LibraryManagement.Application.Services.DTOs.BookModels;
 
@@ -38,6 +38,6 @@ public class BookMappingProfile : Profile
             .ForMember(dest => dest.CategoryId,
                 opt => opt.MapFrom((src, dest) => src.CategoryId ?? dest.CategoryId))
             .ForAllMembers(
-                opt =>opt.Condition((src, dest, srcMember) => srcMember != null));
+                opt => opt.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

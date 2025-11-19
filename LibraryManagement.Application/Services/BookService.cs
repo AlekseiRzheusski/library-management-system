@@ -1,12 +1,12 @@
-using System.Globalization;
 using AutoMapper;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
+
 using LibraryManagement.Application.Services.DTOs.BookModels;
 using LibraryManagement.Application.Services.Interaces;
 using LibraryManagement.Domain.Entities;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
 using LibraryManagement.Shared.Exceptions;
-using Microsoft.Extensions.Logging;
 
 namespace LibraryManagement.Application.Services;
 
@@ -49,7 +49,7 @@ public class BookService : IBookService
         return _mapper.Map<BookDto>(book);
     }
 
-    public async Task<BookDto?>CreateBookAsync(CreateBookCommand command)
+    public async Task<BookDto?> CreateBookAsync(CreateBookCommand command)
     {
         var validation = await _createBookCommandValidator.ValidateAsync(command);
         if (!validation.IsValid)

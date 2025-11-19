@@ -232,7 +232,7 @@ public class AuthorRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
         {
             var repository = _fixture.Container.GetInstance<IAuthorRepository>();
 
-            int result = await repository.GetQueryCountAsync(a=>a.FirstName=="Empty");
+            int result = await repository.GetQueryCountAsync(a => a.FirstName == "Empty");
 
             Assert.Equal(1, result);
         }

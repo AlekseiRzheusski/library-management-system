@@ -1,18 +1,13 @@
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
-using SimpleInjector.Integration.ServiceCollection;
-using SimpleInjector.Integration.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 using LibraryManagement.Api.Services;
 using LibraryManagement.Infrastructure.Data;
 using LibraryManagement.Infrastructure;
 using LibraryManagement.Application;
-using LibraryManagement.Api.Mappings;
-using LibraryManagement.Application.Mappings;
 using LibraryManagement.Api;
-using AutoMapper;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,13 +22,18 @@ container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
 builder.Services.AddSimpleInjector(container, options =>
 {
-    options.AddAspNetCore();
+  options.AddAspNetCore();
+});
+
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+  builder.AddSerilog();
 });
 
 var options = new DbContextOptionsBuilder<LibraryDbContext>()
       .UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
-    //   .EnableSensitiveDataLogging()
-    //   .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Debug)
+      //   .EnableSensitiveDataLogging()
+      // .UseLoggerFactory(loggerFactory)
       .Options;
 
 container.AddInfrastructure(options);
@@ -49,7 +49,7 @@ builder.Services.AddScoped<GrpcBookService>(sp => container.GetInstance<GrpcBook
 // Add services to the container.
 builder.Services.AddGrpc(options =>
 {
-        options.Interceptors.Add<LoggingInterceptor>();
+  options.Interceptors.Add<LoggingInterceptor>();
 });
 
 var app = builder.Build();

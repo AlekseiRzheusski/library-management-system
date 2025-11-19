@@ -20,7 +20,7 @@ public class UpdateBookCommandValidator : AbstractValidator<UpdateBookCommand>
             .When(b => b.CategoryId != null)
             .WithMessage("Category with such Id doesn't exist.");
 
-        RuleFor(b=>b.PageCount)
+        RuleFor(b => b.PageCount)
             .GreaterThan(0).WithMessage("Page number must be greater than 0");
 
         RuleFor(b => b.PublishedDate)

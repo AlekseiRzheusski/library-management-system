@@ -7,9 +7,6 @@ using LibraryManagement.Infrastructure.Data;
 using LibraryManagement.Infrastructure;
 using LibraryManagement.Application;
 using Microsoft.Extensions.Logging;
-using AutoMapper;
-using LibraryManagement.Application.Mappings;
-using LibraryManagement.Api.Mappings;
 using LibraryManagement.Api;
 
 namespace LibraryManagement.Integration.Tests.Fixtures;

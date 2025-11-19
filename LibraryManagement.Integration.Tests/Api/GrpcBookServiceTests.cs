@@ -1,16 +1,15 @@
 using AutoMapper;
-using Azure;
 using FluentValidation;
 using Grpc.Core;
+using Microsoft.Extensions.Logging;
+using Moq;
+
 using Librarymanagement;
 using LibraryManagement.Api.Mappings;
 using LibraryManagement.Api.Services;
-using LibraryManagement.Application.Mappings;
 using LibraryManagement.Application.Services.DTOs.BookModels;
 using LibraryManagement.Application.Services.Interaces;
 using LibraryManagement.Shared.Exceptions;
-using Microsoft.Extensions.Logging;
-using Moq;
 
 namespace LibraryManagement.Integration.Tests.Api;
 
@@ -46,8 +45,8 @@ public class GrpcBookServiceTests
     {
         var book = new BookDto
         {
-            BookId = 1, 
-            Title = "Test Book", 
+            BookId = 1,
+            Title = "Test Book",
             Isbn = "1234567890123",
             Description = "",
             AuthorId = 1,
@@ -59,10 +58,10 @@ public class GrpcBookServiceTests
             IsAvailable = true
         };
 
-        _bookServiceMock.Setup(s => 
+        _bookServiceMock.Setup(s =>
             s.GetBookAsync(1))
             .ReturnsAsync(book);
-        
+
         var request = new BookGetRequest
         {
             BookId = 1
@@ -83,16 +82,16 @@ public class GrpcBookServiceTests
         var request = new BookGetRequest
         {
             BookId = 1
-        };        
+        };
         var context = Mock.Of<ServerCallContext>();
 
-        _bookServiceMock.Setup(s => 
+        _bookServiceMock.Setup(s =>
             s.GetBookAsync(request.BookId))
             .ThrowsAsync(new EntityNotFoundException("No results match your search criteria."));
 
         var ex = await Assert.ThrowsAsync<RpcException>(() =>
             _grpcBookService.GetBook(request, context));
-        
+
         Assert.Equal(StatusCode.NotFound, ex.StatusCode);
     }
 
@@ -102,7 +101,7 @@ public class GrpcBookServiceTests
 
         var request = new CreateBookRequest
         {
-            Title = "Test Book", 
+            Title = "Test Book",
             Isbn = "1234567890123",
             Description = "",
             AuthorId = 1,
@@ -112,8 +111,8 @@ public class GrpcBookServiceTests
         };
         var book = new BookDto
         {
-            BookId = 1, 
-            Title = "Test Book", 
+            BookId = 1,
+            Title = "Test Book",
             Isbn = "1234567890123",
             Description = "",
             AuthorId = 1,
@@ -125,11 +124,11 @@ public class GrpcBookServiceTests
             IsAvailable = true
         };
 
-        _bookServiceMock.Setup(s => 
+        _bookServiceMock.Setup(s =>
             s.CreateBookAsync(
                 It.IsAny<CreateBookCommand>()))
             .ReturnsAsync(book);
-        
+
         var context = Mock.Of<ServerCallContext>();
         var result = await _grpcBookService.CreateBook(request, context);
 
@@ -143,11 +142,11 @@ public class GrpcBookServiceTests
     [Fact]
     public async Task CreateBook_IfServiceMethodThrowsValidationException_ShouldThrowInvalidArgument()
     {
-        _bookServiceMock.Setup(s => 
+        _bookServiceMock.Setup(s =>
             s.CreateBookAsync(
                 It.IsAny<CreateBookCommand>()))
             .ThrowsAsync(new ValidationException("Author with such Id doesn't exist"));
-        
+
         var request = new CreateBookRequest();
         var context = Mock.Of<ServerCallContext>();
 
@@ -165,7 +164,7 @@ public class GrpcBookServiceTests
         {
             BookId = 1
         };
-        _bookServiceMock.Setup(s=>
+        _bookServiceMock.Setup(s =>
             s.DeleteBookAsync(request.BookId));
 
         var context = Mock.Of<ServerCallContext>();
@@ -179,7 +178,7 @@ public class GrpcBookServiceTests
             Times.Once);
     }
 
-        [Fact]
+    [Fact]
     public async Task DeleteBook_IfServiceThrowsEntityNotFoundException_ShouldThrowNotFound()
     {
         var request = new BookDeleteRequest
@@ -187,13 +186,13 @@ public class GrpcBookServiceTests
             BookId = 100
         };
 
-        _bookServiceMock.Setup(s=>
+        _bookServiceMock.Setup(s =>
             s.DeleteBookAsync(request.BookId))
             .ThrowsAsync(new EntityNotFoundException("No results match your search criteria."));
 
         var context = Mock.Of<ServerCallContext>();
 
-        var ex = await Assert.ThrowsAsync<RpcException>(() => 
+        var ex = await Assert.ThrowsAsync<RpcException>(() =>
             _grpcBookService.DeleteBook(request, context));
 
         Assert.Equal(StatusCode.NotFound, ex.StatusCode);
@@ -202,7 +201,8 @@ public class GrpcBookServiceTests
     [Fact]
     public async Task GetBooks_IfSearchResultIsExists_ShouldReturnCorrectResponse()
     {
-        var request = new BookPageRequest{
+        var request = new BookPageRequest
+        {
             SearchRequest = new BookSearchRequest(),
             PageNumber = 1,
             PageSize = 10
@@ -210,10 +210,10 @@ public class GrpcBookServiceTests
 
         var books = new List<BookDto>
         {
-            new () 
+            new ()
             {
-                BookId = 1, 
-                Title = "Test Book", 
+                BookId = 1,
+                Title = "Test Book",
                 Isbn = "1234567890123",
                 Description = "",
                 AuthorId = 1,
@@ -223,16 +223,16 @@ public class GrpcBookServiceTests
                 PublishedDate = "2021-10-19",
                 PageCount = 12,
                 IsAvailable = true
-            } 
+            }
         };
 
-        _bookServiceMock.Setup(s => 
+        _bookServiceMock.Setup(s =>
             s.GetBooksAsync(
-                It.IsAny<SearchBookCommand>(), 
-                request.PageSize, 
+                It.IsAny<SearchBookCommand>(),
+                request.PageSize,
                 request.PageNumber))
             .ReturnsAsync((1, 1, books));
-        
+
         var context = Mock.Of<ServerCallContext>();
 
         var result = await _grpcBookService.GetBooks(request, context);
@@ -252,13 +252,13 @@ public class GrpcBookServiceTests
     [Fact]
     public async Task GetBooks_WhenServiceThrowsValidationException_ShouldThrowInvalidArgument()
     {
-        _bookServiceMock.Setup(s => 
+        _bookServiceMock.Setup(s =>
             s.GetBooksAsync(
-                It.IsAny<SearchBookCommand>(), 
-                It.IsAny<int>(), 
+                It.IsAny<SearchBookCommand>(),
+                It.IsAny<int>(),
                 It.IsAny<int>()))
             .ThrowsAsync(new ValidationException("Author with such Id doesn't exist"));
-        
+
         var request = new BookPageRequest();
         var context = Mock.Of<ServerCallContext>();
 
@@ -271,13 +271,13 @@ public class GrpcBookServiceTests
     [Fact]
     public async Task GetBooks_WhenServiceThrowsIndexOutOfRangeException_ShouldThrowOutOfRange()
     {
-        _bookServiceMock.Setup(s => 
+        _bookServiceMock.Setup(s =>
             s.GetBooksAsync(
-                It.IsAny<SearchBookCommand>(), 
-                It.IsAny<int>(), 
+                It.IsAny<SearchBookCommand>(),
+                It.IsAny<int>(),
                 It.IsAny<int>()))
             .ThrowsAsync(new IndexOutOfRangeException("Page number must not exceed 4"));
-        
+
         var request = new BookPageRequest();
         var context = Mock.Of<ServerCallContext>();
 
@@ -290,13 +290,13 @@ public class GrpcBookServiceTests
     [Fact]
     public async Task GetBooks_WhenServiceThrowsEntityNotFoundException_ShouldThrowNotFound()
     {
-        _bookServiceMock.Setup(s => 
+        _bookServiceMock.Setup(s =>
             s.GetBooksAsync(
-                It.IsAny<SearchBookCommand>(), 
-                It.IsAny<int>(), 
+                It.IsAny<SearchBookCommand>(),
+                It.IsAny<int>(),
                 It.IsAny<int>()))
             .ThrowsAsync(new EntityNotFoundException("No results match your search criteria."));
-        
+
         var request = new BookPageRequest();
         var context = Mock.Of<ServerCallContext>();
 
@@ -311,15 +311,15 @@ public class GrpcBookServiceTests
     {
         var request = new UpdateBookRequest
         {
-            BookId = 1, 
-            Title = "Test Book", 
+            BookId = 1,
+            Title = "Test Book",
             PublishedDate = "2021-10-19",
             PageCount = 12,
         };
         var book = new BookDto
         {
-            BookId = 1, 
-            Title = "Test Book", 
+            BookId = 1,
+            Title = "Test Book",
             Isbn = "1234567890123",
             Description = "",
             AuthorId = 1,
@@ -331,12 +331,12 @@ public class GrpcBookServiceTests
             IsAvailable = true
         };
 
-        _bookServiceMock.Setup(s => 
+        _bookServiceMock.Setup(s =>
             s.UpdateBookAsync(
-                It.IsAny<UpdateBookCommand>(), 
+                It.IsAny<UpdateBookCommand>(),
                 request.BookId))
             .ReturnsAsync(book);
-        
+
         var context = Mock.Of<ServerCallContext>();
 
         var result = await _grpcBookService.UpdateBook(request, context);
@@ -353,18 +353,18 @@ public class GrpcBookServiceTests
     {
         var request = new UpdateBookRequest
         {
-            BookId = 1, 
-            Title = "Test Book", 
+            BookId = 1,
+            Title = "Test Book",
             PublishedDate = "2021-10-19",
             PageCount = 12,
         };
 
-        _bookServiceMock.Setup(s => 
+        _bookServiceMock.Setup(s =>
             s.UpdateBookAsync(
-                It.IsAny<UpdateBookCommand>(), 
+                It.IsAny<UpdateBookCommand>(),
                 It.IsAny<long>()))
             .ThrowsAsync(new ValidationException("Category with such Id doesn't exist."));
-        
+
         var context = Mock.Of<ServerCallContext>();
 
         var ex = await Assert.ThrowsAsync<RpcException>(() =>
