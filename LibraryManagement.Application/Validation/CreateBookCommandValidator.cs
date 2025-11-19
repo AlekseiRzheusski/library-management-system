@@ -9,9 +9,16 @@ namespace LibraryManagement.Application.Validation;
 public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
 {
     private readonly IBookRepository _bookRepository;
-    public CreateBookCommandValidator(IBookRepository bookRepository)
+    private readonly IAuthorRepository _authorRepository;
+    private readonly ICategoryRepository _categoryRepository;
+    public CreateBookCommandValidator(
+        IBookRepository bookRepository, 
+        IAuthorRepository authorRepository, 
+        ICategoryRepository categoryRepository)
     {
         _bookRepository = bookRepository;
+        _authorRepository = authorRepository;
+        _categoryRepository = categoryRepository;
 
         RuleFor(b => b.Title)
             .NotEmpty();
@@ -26,13 +33,13 @@ public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
         RuleFor(b => b.AuthorId)
             .NotEmpty().WithMessage("AuthorID is required.")
             .MustAsync(async (authorId, cancellation) =>
-                await _bookRepository.ExistsAsync(b => b.AuthorId == authorId, cancellation))
+                await _authorRepository.ExistsAsync(a => a.AuthorId == authorId, cancellation))
             .WithMessage("Author with such Id doesn't exist");
 
         RuleFor(b => b.CategoryId)
             .NotEmpty().WithMessage("CategoryID is required.")
             .MustAsync(async (categoryId, cancellation) =>
-                await _bookRepository.ExistsAsync(b => b.CategoryId == categoryId, cancellation))
+                await _categoryRepository.ExistsAsync(c => c.CategoryId == categoryId, cancellation))
             .WithMessage("Category with such Id doesn't exist.");
 
         RuleFor(b => b.PageCount)

@@ -8,15 +8,15 @@ namespace LibraryManagement.Application.Validation;
 
 public class UpdateBookCommandValidator : AbstractValidator<UpdateBookCommand>
 {
-    private readonly IBookRepository _bookRepository;
+    private readonly ICategoryRepository _categoryRepository;
 
-    public UpdateBookCommandValidator(IBookRepository bookRepository)
+    public UpdateBookCommandValidator(ICategoryRepository categoryRepository)
     {
-        _bookRepository = bookRepository;
+        _categoryRepository = categoryRepository;
 
         RuleFor(b => b.CategoryId)
             .MustAsync(async (categoryId, cancellation) =>
-                await _bookRepository.ExistsAsync(b => b.CategoryId == categoryId, cancellation))
+                await _categoryRepository.ExistsAsync(c => c.CategoryId == categoryId, cancellation))
             .When(b => b.CategoryId != null)
             .WithMessage("Category with such Id doesn't exist.");
 
