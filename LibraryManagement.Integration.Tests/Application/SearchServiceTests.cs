@@ -2,6 +2,7 @@
 using LibraryManagement.Integration.Tests.Fixtures;
 using LibraryManagement.Application.Services.DTOs.BookModels;
 using LibraryManagement.Domain.Entities;
+using LibraryManagement.Application.Services.Interaces;
 
 namespace LibraryManagement.Integration.Tests.Application;
 

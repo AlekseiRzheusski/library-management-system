@@ -1,11 +1,54 @@
 using System.Linq.Expressions;
-
+using System.Reflection;
 using LibraryManagement.Application.Services.Interaces;
 
 namespace LibraryManagement.Application.Services;
 
 public class SearchService<T> : ISearchService<T>
 {
+
+    private Expression? BuildPropertyExpression (object dtoValue, PropertyInfo tPropType, ParameterExpression param)
+    {
+        if (tPropType.PropertyType == typeof(string))
+        {
+            string strDtoValue = dtoValue.ToString()!;
+            if (!string.IsNullOrEmpty(strDtoValue))
+            {
+                 return Expression.Call(
+                    Expression.Property(param, tPropType.Name),
+                    typeof(string).GetMethod("Contains", new[] { typeof(string) })!,
+                    Expression.Constant(strDtoValue)
+                );
+            }
+        }
+
+        else if ((Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(int) ||
+                (Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(long) ||
+                (Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(bool))
+        {
+            var propExpr = Expression.Property(param, tPropType.Name);
+
+            return Expression.Equal(
+                propExpr,
+                Expression.Constant(dtoValue, propExpr.Type)
+            );
+        }
+
+        else if ((Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(DateTime))
+        {
+            string strDtoValue = dtoValue.ToString()!;
+            var dateTime = DateTime.Parse(strDtoValue);
+            var propExpr = Expression.Property(param, tPropType.Name);
+
+            return Expression.Equal(
+                Expression.Property(param, tPropType.Name),
+                Expression.Constant(dateTime, propExpr.Type)
+            );
+        }
+
+        return null;
+    }
+
     public Expression<Func<T, bool>> BuildExpression<TDto>(TDto searchDto)
     {
         var dtoType = typeof(TDto);
@@ -22,43 +65,7 @@ public class SearchService<T> : ISearchService<T>
             var tPropType = tType.GetProperty(prop.Name);
             if (tPropType == null) continue;
 
-            Expression? current = null;
-
-            if (tPropType.PropertyType == typeof(string))
-            {
-                string strDtoValue = dtoValue.ToString()!;
-                if (!string.IsNullOrEmpty(strDtoValue))
-                {
-                    current = Expression.Call(
-                        Expression.Property(param, tPropType.Name),
-                        typeof(string).GetMethod("Contains", new[] { typeof(string) })!,
-                        Expression.Constant(strDtoValue)
-                    );
-                }
-            }
-
-            else if ((Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(int) ||
-                    (Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(long) ||
-                    (Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(bool))
-            {
-                var propExpr = Expression.Property(param, tPropType.Name);
-                current = Expression.Equal(
-                    propExpr,
-                    Expression.Constant(dtoValue, propExpr.Type)
-                );
-            }
-
-            else if ((Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(DateTime))
-            {
-                string strDtoValue = dtoValue.ToString()!;
-                var dateTime = DateTime.Parse(strDtoValue);
-                var propExpr = Expression.Property(param, tPropType.Name);
-
-                current = Expression.Equal(
-                    Expression.Property(param, tPropType.Name),
-                    Expression.Constant(dateTime, propExpr.Type)
-                );
-            }
+            Expression? current = BuildPropertyExpression(dtoValue, tPropType, param);
 
             if (current != null)
             {
