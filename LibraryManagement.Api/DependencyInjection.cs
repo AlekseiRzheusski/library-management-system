@@ -17,6 +17,8 @@ public static class DependencyInjection
             {
                 cfg.AddProfile<BookMappingProfile>();
                 cfg.AddProfile<GrpcBookMappingProfile>();
+                cfg.AddProfile<BorrowingMappingProfile>();
+                cfg.AddProfile<GrpcBorrowingMappingProfile>();
             }, loggerFactory);
 
             return config.CreateMapper();

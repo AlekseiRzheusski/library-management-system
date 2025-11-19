@@ -15,5 +15,6 @@ public static class DependencyInjection
         container.Register<IAuthorRepository, AuthorRepository>(Lifestyle.Scoped);
         container.Register<IBookRepository, BookRepository>(Lifestyle.Scoped);
         container.Register<ICategoryRepository, CategoryRepository>(Lifestyle.Scoped);
+        container.Register<IBorrowingRepository, BorrowingRepository>(Lifestyle.Scoped);
     }
 }
