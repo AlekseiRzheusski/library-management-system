@@ -12,7 +12,7 @@ public class Book
 
     public long CategoryId { get; set; }
     public Category Category { get; set; } = null!;
-    
+
     public DateTime? PublishedDate { get; set; }
     public int? PageCount { get; set; }
     public bool IsAvailable { get; set; } = true;

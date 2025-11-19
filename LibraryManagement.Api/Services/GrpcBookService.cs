@@ -1,4 +1,3 @@
-using System.Data;
 using AutoMapper;
 using FluentValidation;
 using Grpc.Core;
@@ -25,9 +24,9 @@ public class GrpcBookService : BookService.BookServiceBase
         try
         {
             var book = await _bookService.GetBookAsync(request.BookId);
-            return new BookGetResponse 
-            { 
-                Book = _mapper.Map<BookResponse>(book) 
+            return new BookGetResponse
+            {
+                Book = _mapper.Map<BookResponse>(book)
             };
         }
         catch (EntityNotFoundException ex)
@@ -63,7 +62,7 @@ public class GrpcBookService : BookService.BookServiceBase
         try
         {
             await _bookService.DeleteBookAsync(request.BookId);
-            return new DeleteResponse {Message = $"{request.BookId} was successfully deleted."};
+            return new DeleteResponse { Message = $"{request.BookId} was successfully deleted." };
         }
         catch (EntityNotFoundException ex)
         {

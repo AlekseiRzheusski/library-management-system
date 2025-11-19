@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 
 namespace LibraryManagement.Application.Services;
 
-public class SearchService<T>: ISearchService<T>
+public class SearchService<T> : ISearchService<T>
 {
     public Expression<Func<T, bool>> BuildExpression<TDto>(TDto searchDto)
     {
@@ -16,7 +16,7 @@ public class SearchService<T>: ISearchService<T>
         {
             var dtoValue = prop.GetValue(searchDto);
             if (dtoValue == null) continue;
-            
+
             var tPropType = tType.GetProperty(prop.Name);
             if (tPropType == null) continue;
 
@@ -35,8 +35,8 @@ public class SearchService<T>: ISearchService<T>
                 }
             }
 
-            else if ((Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(int)||
-                    (Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(long)||
+            else if ((Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(int) ||
+                    (Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(long) ||
                     (Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(bool))
             {
                 var propExpr = Expression.Property(param, tPropType.Name);
@@ -62,7 +62,7 @@ public class SearchService<T>: ISearchService<T>
             {
                 if (finalExpression is null)
                     finalExpression = current;
-                
+
                 else
                     finalExpression = Expression.AndAlso(finalExpression, current);
             }

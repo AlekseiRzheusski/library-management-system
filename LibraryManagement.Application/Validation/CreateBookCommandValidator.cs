@@ -1,7 +1,7 @@
 using System.Globalization;
 using FluentValidation;
+
 using LibraryManagement.Application.Services.DTOs.BookModels;
-using LibraryManagement.Infrastructure.Repositories;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
 
 namespace LibraryManagement.Application.Validation;
@@ -35,7 +35,7 @@ public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
                 await _bookRepository.ExistsAsync(b => b.CategoryId == categoryId, cancellation))
             .WithMessage("Category with such Id doesn't exist.");
 
-        RuleFor(b=>b.PageCount)
+        RuleFor(b => b.PageCount)
             .GreaterThan(0).WithMessage("Page number must be greater than 0");
 
         RuleFor(b => b.PublishedDate)

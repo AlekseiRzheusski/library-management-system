@@ -1,9 +1,9 @@
 using SimpleInjector.Lifestyles;
+using FluentValidation;
 
 using LibraryManagement.Application.Services.Interaces;
 using LibraryManagement.Integration.Tests.Fixtures;
 using LibraryManagement.Application.Services.DTOs.BookModels;
-using FluentValidation;
 using LibraryManagement.Shared.Exceptions;
 
 namespace LibraryManagement.Integration.Tests.Application;

@@ -344,7 +344,7 @@ namespace LibraryManagement.Infrastructure.Migrations
             migrationBuilder.DeleteData("Categories", "CategoryId", 4);
             migrationBuilder.DeleteData("Categories", "CategoryId", 5);
             migrationBuilder.DeleteData("Categories", "CategoryId", 6);
-            
+
             migrationBuilder.DeleteData("Authors", "AuthorId", 1);
             migrationBuilder.DeleteData("Authors", "AuthorId", 2);
             migrationBuilder.DeleteData("Authors", "AuthorId", 3);
