@@ -4,10 +4,12 @@ using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
 using LibraryManagement.Infrastructure.Data;
-using LibraryManagement.Infrastructure.Repositories;
-using LibraryManagement.Infrastructure.Repositories.Interfaces;
 using LibraryManagement.Infrastructure;
 using LibraryManagement.Application;
+using Microsoft.Extensions.Logging;
+using AutoMapper;
+using LibraryManagement.Application.Mappings;
+using LibraryManagement.Api.Mappings;
 using LibraryManagement.Api;
 
 namespace LibraryManagement.Integration.Tests.Fixtures;
@@ -29,8 +31,17 @@ public class SqliteTestDatabaseFixture : IAsyncLifetime
             .UseSqlite(_connection)
             .Options;
 
+        Container.Register(typeof(ILogger<>), typeof(Logger<>), Lifestyle.Singleton);
         Container.AddInfrastructure(options);
         Container.AddApplication();
+        Container.RegisterSingleton<ILoggerFactory>(() =>
+        {
+            return LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+                builder.SetMinimumLevel(LogLevel.None);
+            });
+        });
         Container.AddAutoMapper();
 
         using (AsyncScopedLifestyle.BeginScope(Container))

@@ -6,11 +6,13 @@ using LibraryManagement.Application.Services.Interaces;
 using LibraryManagement.Domain.Entities;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
 using LibraryManagement.Shared.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace LibraryManagement.Application.Services;
 
 public class BookService : IBookService
 {
+    private readonly ILogger<BookService> _logger;
     private readonly IBookRepository _bookRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<CreateBookCommand> _createBookCommandValidator;
@@ -24,8 +26,10 @@ public class BookService : IBookService
         IValidator<CreateBookCommand> createBookCommandValidator,
         IValidator<SearchBookCommand> searchBookCommandValidator,
         IValidator<UpdateBookCommand> updateBookCommandValidator,
-        ISearchService<Book> bookSearchService)
+        ISearchService<Book> bookSearchService,
+        ILogger<BookService> logger)
     {
+        _logger = logger;
         _bookRepository = bookRepository;
         _mapper = mapper;
         _createBookCommandValidator = createBookCommandValidator;
@@ -36,6 +40,7 @@ public class BookService : IBookService
 
     public async Task<BookDto?> GetBookAsync(long bookId)
     {
+        _logger.LogInformation("Fetching book with {0} id", bookId);
         var book = await _bookRepository.GetDetailedBookInfoAsync(bookId);
         if (book == null)
         {
@@ -60,6 +65,8 @@ public class BookService : IBookService
         var detailedBook = await _bookRepository.GetDetailedBookInfoAsync(newBook.BookId);
         var newBookDto = _mapper.Map<BookDto>(detailedBook);
 
+        _logger.LogInformation("Book with id {0} was successfuly created", newBookDto.BookId);
+
         return newBookDto;
     }
 
@@ -71,6 +78,7 @@ public class BookService : IBookService
             throw new EntityNotFoundException($"Book with ID {bookId} does not exist");
         }
 
+        _logger.LogInformation("Removing book with {0} ID", bookId);
         _bookRepository.Delete(book);
         await _bookRepository.SaveAsync();
     }
@@ -92,6 +100,7 @@ public class BookService : IBookService
         if (totalCount > 0 && (pageNumber < 0 || pageNumber > maxPageNumber))
             throw new IndexOutOfRangeException($"Page number must not exceed {maxPageNumber}");
 
+        _logger.LogInformation("Fetching page {0}, with expression filter {1}", pageNumber, expression);
         var resultPage = await _bookRepository.FindBooksAsync(expression, pageSize, pageNumber);
 
         if (!resultPage.Any())
@@ -118,6 +127,7 @@ public class BookService : IBookService
             throw new EntityNotFoundException("No results match your search criteria.");
         }
 
+        _logger.LogInformation("Updating book with {0} ID", bookId);
         _mapper.Map(command, book);
         await _bookRepository.SaveAsync();
 

@@ -38,6 +38,13 @@ dotnet test --logger "console;verbosity=detailed"
 #run one class
 dotnet test --filter "FullyQualifiedName~LibraryManagement.Integration.Tests.Application.BookServiceTests"
 
+#Serilog
+dotnet add LibraryManagement.Api/ package Serilog.AspNetCore
+dotnet add LibraryManagement.Api/ package Serilog.Sinks.Console
+dotnet add LibraryManagement.Api/ package Serilog.Enrichers.Environment
+dotnet add LibraryManagement.Api/ package Serilog.Enrichers.Process
+dotnet add LibraryManagement.Api/ package Serilog.Enrichers.Thread
+
 #migrations
 dotnet ef migrations add InitialCreate --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api
 #to show SQL comands --verbose
