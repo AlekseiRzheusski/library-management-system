@@ -202,7 +202,8 @@ public class GrpcBookServiceTests
     [Fact]
     public async Task GetBooks_IfSearchResultIsExists_ShouldReturnCorrectResponse()
     {
-        var request = new BookSearchRequest{
+        var request = new BookPageRequest{
+            SearchRequest = new BookSearchRequest(),
             PageNumber = 1,
             PageSize = 10
         };
@@ -258,7 +259,7 @@ public class GrpcBookServiceTests
                 It.IsAny<int>()))
             .ThrowsAsync(new ValidationException("Author with such Id doesn't exist"));
         
-        var request = new BookSearchRequest();
+        var request = new BookPageRequest();
         var context = Mock.Of<ServerCallContext>();
 
         var ex = await Assert.ThrowsAsync<RpcException>(() =>
@@ -277,7 +278,7 @@ public class GrpcBookServiceTests
                 It.IsAny<int>()))
             .ThrowsAsync(new IndexOutOfRangeException("Page number must not exceed 4"));
         
-        var request = new BookSearchRequest();
+        var request = new BookPageRequest();
         var context = Mock.Of<ServerCallContext>();
 
         var ex = await Assert.ThrowsAsync<RpcException>(() =>
@@ -296,7 +297,7 @@ public class GrpcBookServiceTests
                 It.IsAny<int>()))
             .ThrowsAsync(new EntityNotFoundException("No results match your search criteria."));
         
-        var request = new BookSearchRequest();
+        var request = new BookPageRequest();
         var context = Mock.Of<ServerCallContext>();
 
         var ex = await Assert.ThrowsAsync<RpcException>(() =>

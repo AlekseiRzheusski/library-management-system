@@ -75,15 +75,15 @@ public class GrpcBookService : BookService.BookServiceBase
         }
     }
 
-    public override async Task<BookListResponse> GetBooks(BookSearchRequest request, ServerCallContext context)
+    public override async Task<BookListResponse> GetBooks(BookPageRequest request, ServerCallContext context)
     {
         try
         {
-            var searchBookCommand = _mapper.Map<SearchBookCommand>(request);
+            var searchBookCommand = _mapper.Map<SearchBookCommand>(request.SearchRequest);
             var pageNumber = request.PageNumber;
             var pageSize = request.PageSize;
 
-            var (totalCount, numberOfPages, searchResultDtos) = await _bookService.GetBooksAsync(searchBookCommand,pageSize,pageNumber);
+            var (totalCount, numberOfPages, searchResultDtos) = await _bookService.GetBooksAsync(searchBookCommand, pageSize, pageNumber);
             var searchResult = _mapper.Map<IEnumerable<BookResponse>>(searchResultDtos);
 
 
@@ -134,6 +134,54 @@ public class GrpcBookService : BookService.BookServiceBase
         catch (EntityNotFoundException ex)
         {
             throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+        }
+    }
+
+    public override async Task GetBooksAllPages(
+        BookAllPagesRequest request,
+        IServerStreamWriter<BookListResponse> responseStream,
+        ServerCallContext context)
+    {
+        try
+        {
+            int pageSize = request.PageSize;
+            bool run = true;
+            int pageNumber = 1;
+            var searchBookCommand = _mapper.Map<SearchBookCommand>(request.SearchRequest);
+
+            do
+            {
+                try
+                {
+                    var (totalCount, numberOfPages, searchResultDtos) = await _bookService.GetBooksAsync(searchBookCommand, pageSize, pageNumber);
+                    var searchResult = _mapper.Map<IEnumerable<BookResponse>>(searchResultDtos);
+
+
+                    var response = new BookListResponse
+                    {
+                        TotalCount = totalCount,
+                        NumberOfPages = numberOfPages,
+                        PageNumber = pageNumber,
+                        PageSize = pageSize
+                    };
+                    response.Books.AddRange(searchResult);
+
+                    await responseStream.WriteAsync(response);
+                    pageNumber++;
+
+                    //imitation of hard work
+                    await Task.Delay(1000);
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    run = false;
+                }
+
+            } while (run);
         }
         catch (Exception ex)
         {

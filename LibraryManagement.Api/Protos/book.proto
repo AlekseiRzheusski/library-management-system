@@ -8,7 +8,8 @@ service BookService {
   rpc GetBook(BookGetRequest) returns (BookGetResponse);
   rpc CreateBook(CreateBookRequest) returns (BookResponse);
   rpc DeleteBook(BookDeleteRequest) returns (DeleteResponse);
-  rpc GetBooks(BookSearchRequest) returns (BookListResponse);
+  rpc GetBooks(BookPageRequest) returns (BookListResponse);
+  rpc GetBooksAllPages(BookAllPagesRequest) returns (stream BookListResponse);
   rpc UpdateBook(UpdateBookRequest) returns (BookResponse);
 }
 
@@ -21,7 +22,7 @@ message UpdateBookRequest {
   google.protobuf.Int32Value page_count = 6;
 }
 
-message BookSearchRequest {
+message BookSearchRequest{
   google.protobuf.StringValue title = 1;
   google.protobuf.StringValue isbn = 2;
   google.protobuf.StringValue description = 3;
@@ -30,8 +31,17 @@ message BookSearchRequest {
   google.protobuf.StringValue published_date = 6; // ISO 8601 format
   google.protobuf.Int32Value page_count = 7;
   google.protobuf.BoolValue is_available = 11;
-  int32 page_number = 12;
-  int32 page_size = 13;
+}
+
+message BookAllPagesRequest{
+  BookSearchRequest search_request = 1;
+  int32 page_size = 2;
+}
+
+message BookPageRequest {
+  BookSearchRequest search_request = 1;
+  int32 page_number = 2;
+  int32 page_size = 3;
 }
 
 message BookGetRequest {

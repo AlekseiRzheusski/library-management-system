@@ -23,4 +23,25 @@ public class LoggingInterceptor : Interceptor
             throw;
         }
     }
+
+    public override async Task ServerStreamingServerHandler<TRequest, TResponse>(
+        TRequest request,
+        IServerStreamWriter<TResponse> responseStream,
+        ServerCallContext context,
+        ServerStreamingServerMethod<TRequest, TResponse> continuation)
+    {
+        Log.Information("gRPC ServerStreaming request: {Method}, Payload: {@Request}. Started...",
+            context.Method, request);
+
+        try
+        {
+            await continuation(request, responseStream, context);
+            Log.Information("gRPC ServerStreaming method finished: {Method}", context.Method);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "gRPC ServerStreaming error: {Method}", context.Method);
+            throw;
+        }
+    }
 }
