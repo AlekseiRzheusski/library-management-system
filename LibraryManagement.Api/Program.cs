@@ -56,7 +56,6 @@ var app = builder.Build();
 
 app.Services.UseSimpleInjector(container);
 // Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
 app.MapGrpcService<GrpcBookService>();
 
 container.Verify();

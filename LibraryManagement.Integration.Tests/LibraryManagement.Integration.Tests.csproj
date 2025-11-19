@@ -36,6 +36,7 @@
     <ProjectReference Include="..\LibraryManagement.Application\LibraryManagement.Application.csproj" />
     <ProjectReference Include="..\LibraryManagement.Api\LibraryManagement.Api.csproj" />
     <ProjectReference Include="..\LibraryManagement.Shared\LibraryManagement.Shared.csproj" />
+    <ProjectReference Include="..\LibraryManagement.Contract\LibraryManagement.Contract.csproj" />
   </ItemGroup>
 
 </Project>
