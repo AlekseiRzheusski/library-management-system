@@ -1,5 +1,7 @@
 using System.Linq.Expressions;
 
+using LibraryManagement.Application.Services.Interaces;
+
 namespace LibraryManagement.Application.Services;
 
 public class SearchService<T> : ISearchService<T>
