@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using LibraryManagement.Domain.Enums;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -235,7 +236,7 @@ namespace LibraryManagement.Infrastructure.Migrations
                         6,
                         new DateTime(2019,11,5),
                         896,
-                        true,
+                        false,
                         DateTime.UtcNow
                     },
                     {
@@ -247,7 +248,7 @@ namespace LibraryManagement.Infrastructure.Migrations
                         5,
                         new DateTime(2004,8,3),
                         600,
-                        true,
+                        false,
                         DateTime.UtcNow
                     },
                     {
@@ -322,6 +323,50 @@ namespace LibraryManagement.Infrastructure.Migrations
                         true,
                         DateTime.UtcNow
                     },
+                }
+            );
+
+            migrationBuilder.InsertData(
+                table: "Borrowings",
+                columns: new[]
+                {
+                    "BorrowingId",
+                    "BookId",
+                    "UserId",
+                    "BorrowDate",
+                    "DueDate",
+                    "ReturnDate",
+                    "Status"
+                },
+                values: new object[,]
+                {
+                    {
+                        1,
+                        7,
+                        1,
+                        new DateTime(2025,11,20),
+                        new DateTime(2025,11,29),
+                        null,
+                        (int)BorrowingStatus.Active
+                    },
+                    {
+                        2,
+                        8,
+                        1,
+                        new DateTime(2025,11,20),
+                        new DateTime(2025,11,29),
+                        null,
+                        (int)BorrowingStatus.Active
+                    },
+                    {
+                        3,
+                        10,
+                        1,
+                        new DateTime(2025,11,10),
+                        new DateTime(2025,11,16),
+                        new DateTime(2025,11,14),
+                        (int)BorrowingStatus.Returned
+                    }
                 }
             );
         }

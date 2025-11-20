@@ -41,9 +41,11 @@ container.AddApplication();
 container.AddAutoMapper();
 
 container.Register<GrpcBookService>(Lifestyle.Scoped);
+container.Register<GrpcBorrowingService>(Lifestyle.Scoped);
 container.Register(typeof(ILogger<>), typeof(Logger<>), Lifestyle.Singleton);
 
 builder.Services.AddScoped<GrpcBookService>(sp => container.GetInstance<GrpcBookService>());
+builder.Services.AddScoped<GrpcBorrowingService>(sp=>container.GetInstance<GrpcBorrowingService>());
 
 
 // Add services to the container.
@@ -57,6 +59,7 @@ var app = builder.Build();
 app.Services.UseSimpleInjector(container);
 // Configure the HTTP request pipeline.
 app.MapGrpcService<GrpcBookService>();
+app.MapGrpcService<GrpcBorrowingService>();
 
 container.Verify();
 
