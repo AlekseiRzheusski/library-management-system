@@ -2,12 +2,16 @@ using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Hangfire;
+using Hangfire.SQLite;
 
-using LibraryManagement.Api.Services;
-using LibraryManagement.Infrastructure.Data;
 using LibraryManagement.Infrastructure;
+using LibraryManagement.Infrastructure.Data;
 using LibraryManagement.Application;
+using LibraryManagement.Application.Services.Interaces;
 using LibraryManagement.Api;
+using LibraryManagement.Api.Services;
+using LibraryManagement.Api.Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,8 +49,7 @@ container.Register<GrpcBorrowingService>(Lifestyle.Scoped);
 container.Register(typeof(ILogger<>), typeof(Logger<>), Lifestyle.Singleton);
 
 builder.Services.AddScoped<GrpcBookService>(sp => container.GetInstance<GrpcBookService>());
-builder.Services.AddScoped<GrpcBorrowingService>(sp=>container.GetInstance<GrpcBorrowingService>());
-
+builder.Services.AddScoped<GrpcBorrowingService>(sp => container.GetInstance<GrpcBorrowingService>());
 
 // Add services to the container.
 builder.Services.AddGrpc(options =>
@@ -54,9 +57,30 @@ builder.Services.AddGrpc(options =>
   options.Interceptors.Add<LoggingInterceptor>();
 });
 
+builder.Services.AddHangfire(config =>
+{
+  config.
+    UseSQLiteStorage(builder.Configuration.GetConnectionString("HangfireConnection"))
+    .UseActivator(new SimpleInjectorJobActivator(container))
+    .UseFilter(new SimpleInjectorAsyncScopeFilterAttribute(container));
+});
+
+builder.Services.AddHangfireServer(options =>
+{
+  options.WorkerCount = 1;
+});
+
 var app = builder.Build();
 
 app.Services.UseSimpleInjector(container);
+app.UseHangfireDashboard("/hangfire");
+
+RecurringJob.AddOrUpdate<IBorrowingService>(
+  "check-expired-borrowings",
+  service => service.CheckExpiredBorrowingsAsync(),
+  "0 22 * * *"
+);
+
 // Configure the HTTP request pipeline.
 app.MapGrpcService<GrpcBookService>();
 app.MapGrpcService<GrpcBorrowingService>();

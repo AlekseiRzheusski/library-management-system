@@ -7,10 +7,11 @@ using LibraryManagement.Domain.Enums;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
 using LibraryManagement.Shared.Exceptions;
 using Microsoft.Extensions.Logging;
+using SimpleInjector.Lifestyles;
 
 namespace LibraryManagement.Application.Services;
 
-public class BorrowingService: IBorrowingService
+public class BorrowingService : IBorrowingService
 {
     private readonly ILogger<BorrowingService> _logger;
     private readonly IMapper _mapper;
@@ -83,5 +84,27 @@ public class BorrowingService: IBorrowingService
         await _borrowingRepository.SaveAsync();
 
         return _mapper.Map<BorrowingDto>(detailedBorrowing);
+    }
+
+    public async Task CheckExpiredBorrowingsAsync()
+    {
+        _logger.LogInformation($"Checking expired borrowings at {DateTime.Now}");
+        var currentDate = DateTime.Today;
+        var activeBorrowings = await _borrowingRepository.FindAndAddToContextAsync(
+            b => b.Status == BorrowingStatus.Active && b.DueDate<=currentDate);
+
+        if (!activeBorrowings.Any())
+        {
+            _logger.LogInformation("No Expired active Borrowings");
+            return;
+        }
+
+        foreach(var borrowing in activeBorrowings)
+        {
+            borrowing.Status = BorrowingStatus.Overdue;
+        }
+
+        await _borrowingRepository.SaveAsync();
+        _logger.LogInformation("Borrowing status updated");
     }
 }

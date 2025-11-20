@@ -7,4 +7,5 @@ public interface IBorrowingService
 {
     public Task<BorrowingDto> BorrowBookAsync(BorrowBookCommand command);
     public Task<BorrowingDto> ReturnBookAsync(long borrowingId);
+    public Task CheckExpiredBorrowingsAsync();
 }
