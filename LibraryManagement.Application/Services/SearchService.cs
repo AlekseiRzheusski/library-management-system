@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using LibraryManagement.Application.Services.Interaces;
+using LibraryManagement.Domain.Enums;
 
 namespace LibraryManagement.Application.Services;
 
@@ -43,6 +44,17 @@ public class SearchService<T> : ISearchService<T>
             return Expression.Equal(
                 Expression.Property(param, tPropType.Name),
                 Expression.Constant(dateTime, propExpr.Type)
+            );
+        }
+        else if ((Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(BorrowingStatus))
+        {
+            string strDtoValue = dtoValue.ToString()!;
+            BorrowingStatus status = Enum.Parse<BorrowingStatus>(strDtoValue);
+            var propExpr = Expression.Property(param, tPropType.Name);
+
+            return Expression.Equal(
+                Expression.Property(param, tPropType.Name),
+                Expression.Constant(status, propExpr.Type)
             );
         }
 

@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using FluentValidation;
+using LibraryManagement.Application.Services.DTOs.BookModels;
 using LibraryManagement.Application.Services.DTOs.BorrowingModels;
 using LibraryManagement.Application.Services.Interaces;
 using LibraryManagement.Domain.Entities;
@@ -18,19 +20,25 @@ public class BorrowingService : IBorrowingService
     private readonly IBorrowingRepository _borrowingRepository;
     private readonly IBookRepository _bookRepository;
     private readonly IValidator<BorrowBookCommand> _borrowBookCommandValidator;
+    private readonly IValidator<UserBorrowingsCommand> _userBorrowingsCommandValidator;
+    private readonly ISearchService<Borrowing> _borrowingSearchService;
     private const int DefaultDaysToReturn = 14;
     public BorrowingService(
         ILogger<BorrowingService> logger,
         IMapper mapper,
         IBorrowingRepository borrowingRepository,
         IBookRepository bookRepository,
-        IValidator<BorrowBookCommand> borrowBookCommandValidator)
+        IValidator<BorrowBookCommand> borrowBookCommandValidator,
+        IValidator<UserBorrowingsCommand> userBorrowingsCommandValidator,
+        ISearchService<Borrowing> borrowingSearchService)
     {
         _logger = logger;
         _mapper = mapper;
         _borrowingRepository = borrowingRepository;
         _bookRepository = bookRepository;
         _borrowBookCommandValidator = borrowBookCommandValidator;
+        _userBorrowingsCommandValidator = userBorrowingsCommandValidator;
+        _borrowingSearchService = borrowingSearchService;
     }
 
     public async Task<BorrowingDto> BorrowBookAsync(BorrowBookCommand command)
@@ -84,6 +92,57 @@ public class BorrowingService : IBorrowingService
         await _borrowingRepository.SaveAsync();
 
         return _mapper.Map<BorrowingDto>(detailedBorrowing);
+    }
+
+    private async Task<(int totalCount, int maxPageNumber, IEnumerable<BorrowingDto>)>GetBorrowingsAsyncByExpression(
+        Expression<Func<Borrowing, bool>> expression, 
+        int pageNumber, 
+        int pageSize)
+    {
+        if (pageSize <= 0)
+        {
+            throw new ValidationException("Page Size must be greater than 0");
+        }
+
+        int totalCount = await _borrowingRepository.GetQueryCountAsync(expression);
+        int maxPageNumber = (int)Math.Ceiling((double)totalCount / pageSize);
+
+        if (totalCount > 0 && (pageNumber < 0 || pageNumber > maxPageNumber))
+            throw new IndexOutOfRangeException($"Page number must not exceed {maxPageNumber}");
+
+        var result = await _borrowingRepository.FindBorrowingsAsync(expression, pageNumber, pageSize);
+
+        if (!result.Any())
+        {
+            throw new EntityNotFoundException("No results match your search criteria.");
+        }
+
+        var resultDtoPage =  _mapper.Map<IEnumerable<BorrowingDto>>(result);
+        return (totalCount, maxPageNumber, resultDtoPage);
+    }
+
+    public async Task<(int totalCount, int maxPageNumber, IEnumerable<BorrowingDto>)> GetUserBorrowingsAsync(
+        UserBorrowingsCommand command,
+        int pageNumber, 
+        int pageSize)
+    {
+        var validation = await _userBorrowingsCommandValidator.ValidateAsync(command);
+        if (!validation.IsValid)
+        {
+            var message = string.Join("; ", validation.Errors.Select(e => e.ErrorMessage));
+            throw new ValidationException(message);
+        }
+
+        var expression = _borrowingSearchService.BuildExpression<UserBorrowingsCommand>(command);
+        
+        return await GetBorrowingsAsyncByExpression(expression, pageNumber, pageSize);
+    }
+
+    public async Task<(int totalCount, int maxPageNumber, IEnumerable<BorrowingDto>)> GetOverdueBooksAsync(
+        int pageNumber, 
+        int pageSize)
+    {        
+        return await GetBorrowingsAsyncByExpression(e=>e.Status == BorrowingStatus.Overdue, pageNumber, pageSize);
     }
 
     public async Task CheckExpiredBorrowingsAsync()

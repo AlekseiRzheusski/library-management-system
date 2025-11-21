@@ -1,3 +1,4 @@
+using System.Configuration;
 using AutoMapper;
 using FluentValidation;
 using Grpc.Core;
@@ -55,6 +56,91 @@ public class GrpcBorrowingService: BorrowingService.BorrowingServiceBase
         catch (ValidationException ex)
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+        }
+    }
+
+    public async override Task<BorrowingListResponse> GetUserBorrowings(UserBorrowingsRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var userBorrowingsCommand = _mapper.Map<UserBorrowingsCommand>(request);
+
+            var pageNumber = request.PageNumber;
+            var pageSize = request.PageSize;
+
+            var (totalCount, numberOfPages, searchResultDto) = await _borrowingService.GetUserBorrowingsAsync(
+                userBorrowingsCommand, 
+                pageNumber, 
+                pageSize);
+
+            var searchResult = _mapper.Map<IEnumerable<BorrowingResponse>>(searchResultDto);
+
+            var response = new BorrowingListResponse
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalCount = totalCount,
+                NumberOfPages = numberOfPages
+            };
+            response.Borrowings.AddRange(searchResult);
+            return response;
+        }
+        catch (ValidationException ex)
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+        }
+        catch (EntityNotFoundException ex)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+        }
+        catch (IndexOutOfRangeException ex)
+        {
+            throw new RpcException(new Status(StatusCode.OutOfRange, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+        }
+    }
+
+    public async override Task<BorrowingListResponse> GetOverdueBooks(OverdueBooksRequest request, ServerCallContext context)
+    {
+        try
+        {
+            var pageNumber = request.PageNumber;
+            var pageSize = request.PageSize;
+
+            var (totalCount, numberOfPages, searchResultDto) = await _borrowingService.GetOverdueBooksAsync(
+                pageNumber, 
+                pageSize);
+            
+            var searchResult = _mapper.Map<IEnumerable<BorrowingResponse>>(searchResultDto);
+
+            var response = new BorrowingListResponse
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalCount = totalCount,
+                NumberOfPages = numberOfPages
+            };
+            response.Borrowings.AddRange(searchResult);
+            return response;
+        }
+        catch (ValidationException ex)
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+        }
+        catch (EntityNotFoundException ex)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+        }
+        catch (IndexOutOfRangeException ex)
+        {
+            throw new RpcException(new Status(StatusCode.OutOfRange, ex.Message));
         }
         catch (Exception ex)
         {
