@@ -100,4 +100,20 @@ public class BorrowingServiceTests : IClassFixture<SqliteTestDatabaseFixture>
             });
         }
     }
+
+    [Fact]
+    public async Task CheckExpiredBorrowingsAsync_WhenExpiredBorrowingExists_ShouldUpdate()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBorrowingService>();
+            var borrowingRepository = _fixture.Container.GetInstance<IBorrowingRepository>();
+
+            await service.CheckExpiredBorrowingsAsync();
+
+            var borrowing = await borrowingRepository.GetByIdAsync(4);
+
+            Assert.Equal(BorrowingStatus.Overdue, borrowing!.Status);
+        }
+    }
 }

@@ -224,7 +224,7 @@ namespace LibraryManagement.Infrastructure.Migrations
                         6,
                         new DateTime(2016,10,18),
                         896,
-                        true,
+                        false,
                         DateTime.UtcNow
                     },
                     {
@@ -366,6 +366,15 @@ namespace LibraryManagement.Infrastructure.Migrations
                         new DateTime(2025,11,16),
                         new DateTime(2025,11,14),
                         (int)BorrowingStatus.Returned
+                    },
+                    {
+                        4,
+                        6,
+                        1,
+                        new DateTime(2025,11,10),
+                        new DateTime(2025,11,19),
+                        null,
+                        (int)BorrowingStatus.Active
                     }
                 }
             );
