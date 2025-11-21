@@ -45,6 +45,11 @@ dotnet add LibraryManagement.Api/ package Serilog.Enrichers.Environment
 dotnet add LibraryManagement.Api/ package Serilog.Enrichers.Process
 dotnet add LibraryManagement.Api/ package Serilog.Enrichers.Thread
 
+#Hangfire
+dotnet add LibraryManagement.Api/ package Hangfire
+dotnet add LibraryManagement.Api/ package Hangfire.AspNetCore
+dotnet add LibraryManagement.Api/ package Hangfire.SQLite
+
 #migrations
 dotnet ef migrations add InitialCreate --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api
 #to show SQL comands --verbose
