@@ -9,5 +9,6 @@ public class GrpcBorrowingMappingProfile: Profile
     {
         CreateMap<BorrowingDto, BorrowingResponse>();
         CreateMap<BorrowBookRequest, BorrowBookCommand>();
+        CreateMap<UserBorrowingsRequest, UserBorrowingsCommand>();
     }
 }

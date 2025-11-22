@@ -212,7 +212,7 @@ namespace LibraryManagement.Infrastructure.Migrations
                         5,
                         new DateTime(2001,7,10),
                         192,
-                        true,
+                        false,
                         DateTime.UtcNow
                     },
                     {
@@ -344,8 +344,8 @@ namespace LibraryManagement.Infrastructure.Migrations
                         1,
                         7,
                         1,
-                        new DateTime(2025,11,20),
-                        new DateTime(2025,11,29),
+                        DateTime.Today,
+                        DateTime.Today.AddDays(9),
                         null,
                         (int)BorrowingStatus.Active
                     },
@@ -353,8 +353,8 @@ namespace LibraryManagement.Infrastructure.Migrations
                         2,
                         8,
                         1,
-                        new DateTime(2025,11,20),
-                        new DateTime(2025,11,29),
+                        DateTime.Today,
+                        DateTime.Today.AddDays(9),
                         null,
                         (int)BorrowingStatus.Active
                     },
@@ -373,6 +373,15 @@ namespace LibraryManagement.Infrastructure.Migrations
                         1,
                         new DateTime(2025,11,10),
                         new DateTime(2025,11,19),
+                        null,
+                        (int)BorrowingStatus.Active
+                    },
+                    {
+                        5,
+                        5,
+                        1,
+                        DateTime.Today,
+                        DateTime.Today.AddDays(6),
                         null,
                         (int)BorrowingStatus.Active
                     }

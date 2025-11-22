@@ -85,6 +85,7 @@ public class BookService : IBookService
 
     public async Task<(int totalCount, int numberOfPages, IEnumerable<BookDto> searchResultPage)> GetBooksAsync(SearchBookCommand command, int pageSize, int pageNumber)
     {
+        //TODO: add page size validation
         var validation = await _searchBookCommandValidator.ValidateAsync(command);
         if (!validation.IsValid)
         {

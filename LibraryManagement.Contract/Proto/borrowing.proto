@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package librarymanagement;
 
+import "google/protobuf/wrappers.proto";
+
 service BorrowingService {
   rpc BorrowBook(BorrowBookRequest) returns (BorrowingResponse);
   rpc ReturnBook(ReturnBookRequest) returns (BorrowingResponse);
@@ -21,7 +23,9 @@ message ReturnBookRequest {
 
 message UserBorrowingsRequest {
   int64 user_id = 1;
-  string status = 2; // "Active", "Returned", "Overdue"
+  google.protobuf.StringValue status = 2; // "Active", "Returned", "Overdue"
+  int32 page_number = 3;
+  int32 page_size = 4;
 }
 
 message OverdueBooksRequest {
@@ -44,6 +48,7 @@ message BorrowingResponse {
 message BorrowingListResponse {
   repeated BorrowingResponse borrowings = 1;
   int32 total_count = 2;
-  int32 page_number = 3;
-  int32 page_size = 4;
+  int32 number_of_pages = 3;
+  int32 page_number = 4;
+  int32 page_size = 5;
 }
