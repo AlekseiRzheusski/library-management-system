@@ -5,6 +5,7 @@ using LibraryManagement.Application.Services.Interaces;
 using LibraryManagement.Domain.Enums;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
 using LibraryManagement.Integration.Tests.Fixtures;
+using Microsoft.Identity.Client;
 using SimpleInjector.Lifestyles;
 
 namespace LibraryManagement.Integration.Tests.Application;
@@ -114,6 +115,41 @@ public class BorrowingServiceTests : IClassFixture<SqliteTestDatabaseFixture>
             var borrowing = await borrowingRepository.GetByIdAsync(4);
 
             Assert.Equal(BorrowingStatus.Overdue, borrowing!.Status);
+        }
+    }
+
+    [Fact]
+    public async Task GetUserBorrowingsAsync_WhenBorrowingsExists_ShouldReturn()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBorrowingService>();
+
+            var command = new UserBorrowingsCommand
+            {
+                UserId = 1,
+                Status = "Active"
+            };
+            int pageSize = 2;
+
+            var (_, _, result) = await service.GetUserBorrowingsAsync(command, 1, pageSize);
+
+            Assert.Equal(pageSize, result.Count());
+        }
+    }
+
+    [Fact]
+    public async Task GetOverdueBooksAsync_WhenBorrowingsExists_ShouldReturn()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<IBorrowingService>();
+
+            int pageSize = 2;
+
+            var (_, _, result) = await service.GetOverdueBooksAsync(1, pageSize);
+
+            Assert.Equal(pageSize, result.Count());
         }
     }
 }
