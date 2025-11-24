@@ -135,6 +135,22 @@ namespace LibraryManagement.Infrastructure.Migrations
                         1,
                         true
                     },
+                    {
+                        7,
+                        "Urban fantasy",
+                        "Is a subgenre of fantasy, placing supernatural elements in a contemporary urban-affected setting.",
+                        6,
+                        1,
+                        true
+                    },
+                    {
+                        8,
+                        "Dark fantasy",
+                        "Is a subgenre of literary, artistic, and cinematic fantasy works that incorporates disturbing and frightening themes.",
+                        6,
+                        1,
+                        false
+                    }
                 }
             );
 

@@ -10,6 +10,7 @@ using LibraryManagement.Application.Services.DTOs.BookModels;
 using LibraryManagement.Application.Validation;
 using LibraryManagement.Domain.Entities;
 using LibraryManagement.Application.Services.DTOs.BorrowingModels;
+using LibraryManagement.Application.Services.DTOs.CategoryModels;
 
 namespace LibraryManagement.Application;
 
@@ -19,12 +20,17 @@ public static class DependencyInjection
     {
         container.Register<IBookService, BookService>(Lifestyle.Scoped);
         container.Register<IBorrowingService, BorrowingService>(Lifestyle.Scoped);
+        container.Register<ICategoryService, CategoryService>(Lifestyle.Scoped);
+
+        container.Register<ICategorySortOrderService, CategorySortOrderService>(Lifestyle.Scoped);
+        container.Register(typeof(ISearchService<>), typeof(SearchService<>), Lifestyle.Singleton);
 
         container.Register<IValidator<CreateBookCommand>, CreateBookCommandValidator>(Lifestyle.Scoped);
         container.Register<IValidator<SearchBookCommand>, SearchBookCommandValidator>(Lifestyle.Singleton);
-        container.Register(typeof(ISearchService<>), typeof(SearchService<>), Lifestyle.Singleton);
         container.Register<IValidator<UpdateBookCommand>, UpdateBookCommandValidator>(Lifestyle.Scoped);
+        container.Register<IValidator<SearchCategoryCommand>, SearchCategoryCommandValidator>(Lifestyle.Scoped);
         container.Register<IValidator<BorrowBookCommand>, BorrowBookCommandValidator>(Lifestyle.Scoped);
         container.Register<IValidator<UserBorrowingsCommand>, UserBorrowingsCommandValidator>(Lifestyle.Scoped);
+        container.Register<IValidator<CreateCategoryCommand>, CreateCategoryCommandValidator>(Lifestyle.Scoped);
     }
 }
