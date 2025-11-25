@@ -11,6 +11,9 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
     {
         _categoryRepository = categoryRepository;
 
+        RuleFor(c=>c.Name)
+            .NotEmpty().WithMessage("Category name is required");
+
         RuleFor(c=>c.ParentCategoryId)
             .MustAsync(async (categoryId, cancellation)=>
                 await _categoryRepository.ExistsAsync(c=>c.CategoryId == categoryId, cancellation))
