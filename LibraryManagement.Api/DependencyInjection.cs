@@ -20,6 +20,7 @@ public static class DependencyInjection
                 cfg.AddProfile<BorrowingMappingProfile>();
                 cfg.AddProfile<GrpcBorrowingMappingProfile>();
                 cfg.AddProfile<CategoryMappingProfile>();
+                cfg.AddProfile<GrpcCategoryMappingProfile>();
             }, loggerFactory);
 
             return config.CreateMapper();
