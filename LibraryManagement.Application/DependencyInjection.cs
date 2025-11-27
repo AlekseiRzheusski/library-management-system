@@ -12,6 +12,10 @@ using LibraryManagement.Domain.Entities;
 using LibraryManagement.Application.Services.DTOs.BorrowingModels;
 using LibraryManagement.Application.Services.DTOs.CategoryModels;
 using LibraryManagement.Application.Services.DTOs.AuthorModels;
+using MediatR;
+using LibraryManagement.Application.Authors.GetAuthor;
+using AdaskoTheBeAsT.MediatR.SimpleInjector; 
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LibraryManagement.Application;
 
@@ -40,5 +44,15 @@ public static class DependencyInjection
         container.Register<IValidator<SearchAuthorCommand>, SearchAuthorCommandValidator>(Lifestyle.Scoped);
         container.Register<IValidator<CreateAuthorCommand>, CreateAuthorCommandValidator>(Lifestyle.Scoped);
         container.Register<IValidator<UpdateAuthorCommand>, UpdateAuthorCommandValidator>(Lifestyle.Scoped);
+
+        container.AddMediatr();
+    }
+
+    public static void AddMediatr(this Container container)
+    {
+        var assembliesToScan = new[] {
+            typeof(GetAuthor).Assembly
+        };
+        container.AddMediatR(assembliesToScan);
     }
 }

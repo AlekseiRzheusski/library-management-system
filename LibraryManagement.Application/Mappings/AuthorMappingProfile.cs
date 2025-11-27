@@ -22,6 +22,8 @@ public class AuthorMappingProfile : Profile
         
         CreateMap<UpdateAuthorCommand, Author>()
             .ForMember(dest => dest.DateOfBirth,
-                opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.DateOfBirth) ? DateTime.Parse(src.DateOfBirth) : (DateTime?)null));
+                opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.DateOfBirth) ? DateTime.Parse(src.DateOfBirth) : (DateTime?)null))
+            .ForAllMembers(
+                opt => opt.Condition((src, dest, srcMember) => srcMember != null));;
     }
 }
