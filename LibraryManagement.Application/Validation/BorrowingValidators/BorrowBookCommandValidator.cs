@@ -1,26 +1,26 @@
 using FluentValidation;
+
 using LibraryManagement.Application.Services.DTOs.BorrowingModels;
-using LibraryManagement.Domain.Entities;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
 
-namespace LibraryManagement.Application.Validation;
+namespace LibraryManagement.Application.Validation.BorrowingValidators;
 
-public class BorrowBookCommandValidator: AbstractValidator<BorrowBookCommand>
+public class BorrowBookCommandValidator : AbstractValidator<BorrowBookCommand>
 {
     private readonly IBookRepository _bookRepository;
     public BorrowBookCommandValidator(IBookRepository bookRepository)
     {
         _bookRepository = bookRepository;
 
-        RuleFor(b=>b.UserId)
+        RuleFor(b => b.UserId)
             .NotEmpty().WithMessage("UserID is requred")
             .GreaterThan(0).WithMessage("UserID must be greater than 0");
-        
-        RuleFor(b=>b.daysToReturn)
-            .GreaterThan(0).WithMessage("Days to return must be greater than 0")
-            .When(b=> b.daysToReturn != null);
 
-        RuleFor(b=>b.BookId)
+        RuleFor(b => b.daysToReturn)
+            .GreaterThan(0).WithMessage("Days to return must be greater than 0")
+            .When(b => b.daysToReturn != null);
+
+        RuleFor(b => b.BookId)
             .NotEmpty().WithMessage("BookID is required.")
             .MustAsync(async (bookId, cancellation) =>
                 await _bookRepository.ExistsAsync(b => b.BookId == bookId, cancellation))

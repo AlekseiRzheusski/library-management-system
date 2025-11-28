@@ -3,7 +3,7 @@ using System.Globalization;
 
 using LibraryManagement.Application.Services.DTOs.AuthorModels;
 
-namespace LibraryManagement.Application.Validation;
+namespace LibraryManagement.Application.Validation.AuthorValidators;
 
 public class UpdateAuthorCommandValidator : AbstractValidator<UpdateAuthorCommand>
 {
