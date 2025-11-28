@@ -3,7 +3,7 @@ using FluentValidation;
 
 using LibraryManagement.Application.Services.DTOs.BookModels;
 
-namespace LibraryManagement.Application.Validation;
+namespace LibraryManagement.Application.Validation.BookValidators;
 
 public class SearchBookCommandValidator : AbstractValidator<SearchBookCommand>
 {

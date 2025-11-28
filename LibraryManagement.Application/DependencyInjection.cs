@@ -1,21 +1,18 @@
 ﻿using SimpleInjector;
-using AutoMapper;
-using Microsoft.Extensions.Logging;
+using FluentValidation;
+using AdaskoTheBeAsT.MediatR.SimpleInjector;
+using Microsoft.Extensions.DependencyInjection;
 
-using LibraryManagement.Application.Mappings;
 using LibraryManagement.Application.Services;
 using LibraryManagement.Application.Services.Interaces;
-using FluentValidation;
 using LibraryManagement.Application.Services.DTOs.BookModels;
-using LibraryManagement.Application.Validation;
-using LibraryManagement.Domain.Entities;
+using LibraryManagement.Application.Validation.BorrowingValidators;
+using LibraryManagement.Application.Validation.AuthorValidators;
+using LibraryManagement.Application.Validation.BookValidators;
 using LibraryManagement.Application.Services.DTOs.BorrowingModels;
 using LibraryManagement.Application.Services.DTOs.CategoryModels;
 using LibraryManagement.Application.Services.DTOs.AuthorModels;
-using MediatR;
 using LibraryManagement.Application.Authors.GetAuthor;
-using AdaskoTheBeAsT.MediatR.SimpleInjector; 
-using Microsoft.Extensions.DependencyInjection;
 
 namespace LibraryManagement.Application;
 

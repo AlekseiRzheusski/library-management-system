@@ -4,7 +4,7 @@ using FluentValidation;
 using LibraryManagement.Application.Services.DTOs.BookModels;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
 
-namespace LibraryManagement.Application.Validation;
+namespace LibraryManagement.Application.Validation.BookValidators;
 
 public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
 {
@@ -12,8 +12,8 @@ public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
     private readonly IAuthorRepository _authorRepository;
     private readonly ICategoryRepository _categoryRepository;
     public CreateBookCommandValidator(
-        IBookRepository bookRepository, 
-        IAuthorRepository authorRepository, 
+        IBookRepository bookRepository,
+        IAuthorRepository authorRepository,
         ICategoryRepository categoryRepository)
     {
         _bookRepository = bookRepository;
