@@ -1,10 +1,10 @@
 using FluentValidation;
-using LibraryManagement.Application.Services.DTOs.BookModels;
+using SimpleInjector.Lifestyles;
+
 using LibraryManagement.Application.Services.DTOs.CategoryModels;
 using LibraryManagement.Application.Services.Interaces;
 using LibraryManagement.Infrastructure.Repositories.Interfaces;
 using LibraryManagement.Integration.Tests.Fixtures;
-using SimpleInjector.Lifestyles;
 
 namespace LibraryManagement.Integration.Tests.Application;
 
@@ -91,4 +91,28 @@ public class CategoryServiceTests : IClassFixture<SqliteTestDatabaseFixture>
             Assert.True(await categoryRepository.ExistsAsync(c=> c.CategoryId == result.CategoryId));
         }
     }
+
+    [Fact]
+    public async Task CreateCategoryAsync_IfNameExists_ShouldThrow()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<ICategoryService>();
+            var categoryRepository = _fixture.Container.GetInstance<ICategoryRepository>();
+
+            var command = new CreateCategoryCommand
+            {
+                Name = "Math",
+                Description = "Is a branch of mathematics concerned with properties of space such as the distance, shape, size, and relative position of figures.",
+                ParentCategoryId = 1
+            };
+            var ex = await Assert.ThrowsAsync<ValidationException>(async () =>
+            {
+                var result = await service.CreateCategoryAsync(command);    
+            });
+
+            Assert.Equal("The Category name should be unique.", ex.Message);
+        }
+    }
+
 }
