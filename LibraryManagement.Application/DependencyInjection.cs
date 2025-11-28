@@ -26,7 +26,6 @@ public static class DependencyInjection
         container.Register<IBookService, BookService>(Lifestyle.Scoped);
         container.Register<IBorrowingService, BorrowingService>(Lifestyle.Scoped);
         container.Register<ICategoryService, CategoryService>(Lifestyle.Scoped);
-        container.Register<IAuthorService, AuthorService>(Lifestyle.Scoped);
 
         container.Register<ICategorySortOrderService, CategorySortOrderService>(Lifestyle.Scoped);
         container.Register(typeof(ISearchService<>), typeof(SearchService<>), Lifestyle.Singleton);
