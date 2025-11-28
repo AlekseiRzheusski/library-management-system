@@ -11,7 +11,7 @@ public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
 {
     public CategoryRepository(LibraryDbContext context) : base(context) { }
 
-    public async Task<Category?> GetDetailedCategoryByIdAsync(long id)
+    public override async Task<Category?> GetDetailedEntityByIdAsync(long id)
     {
         var category = await _dbSet.FindAsync(id);
         if (category == null) return null;
@@ -21,7 +21,22 @@ public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
         return category;
     }
 
-    public async Task<IEnumerable<Category>> GetDetailedCategoriesAsync(Expression<Func<Category, bool>> predicate)
+    public override async Task<IEnumerable<Category>> FindDetaliedEntitiesPageAsync(
+        Expression<Func<Category, bool>> predicate, 
+        int pageSize, 
+        int pageNumber)
+    {
+        return await _dbSet
+            .Where(predicate)
+            .Include(c=>c.ParentCategory)
+            .Include(c => c.Books)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public override async Task<IEnumerable<Category>> FindDetaliedEntitiesAsync(Expression<Func<Category, bool>> predicate)
     {
         return await _dbSet
             .Where(predicate)

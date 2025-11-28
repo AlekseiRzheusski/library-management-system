@@ -21,7 +21,7 @@ public class GetAuthorHandler: IRequestHandler<GetAuthor, AuthorDto>
         CancellationToken token
     )
     {
-        var author = await _authorRepository.GetDetailedAuthorByIdAsync(request.AuthorId);
+        var author = await _authorRepository.GetDetailedEntityByIdAsync(request.AuthorId);
         if (author is null)
             throw new EntityNotFoundException($"Author with ID {request.AuthorId} does not exist");
 

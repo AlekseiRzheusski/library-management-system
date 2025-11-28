@@ -21,7 +21,7 @@ public class BookRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
         using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
         {
             var repository = _fixture.Container.GetInstance<IBookRepository>();
-            var result = await repository.GetDetailedBookInfoAsync(2);
+            var result = await repository.GetDetailedEntityByIdAsync(2);
             Assert.NotNull(result);
             Assert.Equal(2, result.BookId);
             Assert.Equal("Structured computer architecture", result.Title);
@@ -39,7 +39,7 @@ public class BookRepositoryTests : IClassFixture<SqliteTestDatabaseFixture>
 
             Expression<Func<Book, bool>> expression = b => b.ISBN.Contains("978030781") && b.AuthorId == 1;
 
-            var resultList = await repository.FindBooksAsync(expression, 100, 1);
+            var resultList = await repository.FindDetaliedEntitiesPageAsync(expression, 100, 1);
 
             Assert.Single(resultList);
             var resultEntity = resultList.First();

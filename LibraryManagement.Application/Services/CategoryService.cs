@@ -37,7 +37,7 @@ public class CategoryService : ICategoryService
 
     public async Task<List<CategoryTreeDto>> GetCategoryTreeAsync()
     {
-        var categories = await _categoryRepository.GetDetailedCategoriesAsync(e => true);
+        var categories = await _categoryRepository.FindDetaliedEntitiesAsync(e => true);
 
         var lookup = categories.ToLookup(c => c.ParentCategoryId);
         foreach (var category in categories)
@@ -62,7 +62,7 @@ public class CategoryService : ICategoryService
 
         var expression = _categorySearchService.BuildExpression<SearchCategoryCommand>(command);
 
-        var result = await _categoryRepository.GetDetailedCategoriesAsync(expression);
+        var result = await _categoryRepository.FindDetaliedEntitiesAsync(expression);
 
         if (!result.Any())
         {
@@ -88,7 +88,7 @@ public class CategoryService : ICategoryService
 
         await _categorySortOrderService.ReorderCategoriesAsync();
 
-        var newDetailedCategory = await _categoryRepository.GetDetailedCategoryByIdAsync(newCategory.CategoryId);
+        var newDetailedCategory = await _categoryRepository.GetDetailedEntityByIdAsync(newCategory.CategoryId);
 
         return _mapper.Map<CategoryDto>(newDetailedCategory);
     }

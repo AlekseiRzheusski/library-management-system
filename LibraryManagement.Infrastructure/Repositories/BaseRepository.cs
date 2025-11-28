@@ -6,10 +6,18 @@ using LibraryManagement.Infrastructure.Repositories.Interfaces;
 
 namespace LibraryManagement.Infrastructure.Repositories;
 
-public class BaseRepository<T> : IBaseRepository<T> where T : class
+public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
 {
     protected readonly LibraryDbContext _context;
     protected readonly DbSet<T> _dbSet;
+
+    public abstract Task<T?> GetDetailedEntityByIdAsync(long id);
+    public abstract Task<IEnumerable<T>> FindDetaliedEntitiesPageAsync(
+        Expression<Func<T, bool>> predicate, 
+        int pageSize, 
+        int pageNumber);
+    public abstract Task<IEnumerable<T>> FindDetaliedEntitiesAsync(Expression<Func<T, bool>> predicate);
+
     public BaseRepository(LibraryDbContext context)
     {
         _context = context;

@@ -10,7 +10,7 @@ public class BorrowingRepository : BaseRepository<Borrowing>, IBorrowingReposito
 {
     public BorrowingRepository(LibraryDbContext context) : base(context) { }
 
-    public async Task<Borrowing?> GetDetailedBorrowing(long id)
+    public override async Task<Borrowing?> GetDetailedEntityByIdAsync(long id)
     {
         var borrowing = await _dbSet.FindAsync(id);
         if (borrowing == null) return null;
@@ -19,16 +19,25 @@ public class BorrowingRepository : BaseRepository<Borrowing>, IBorrowingReposito
         return borrowing;
     }
 
-    public async Task<IEnumerable<Borrowing>> FindBorrowingsAsync(
+    public override async Task<IEnumerable<Borrowing>> FindDetaliedEntitiesPageAsync(
         Expression<Func<Borrowing, bool>> predicate, 
-        int pageNumber, 
-        int pageSize)
+        int pageSize, 
+        int pageNumber)
     {
         return await _dbSet
             .Where(predicate)
             .Include(b => b.Book)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public override async Task<IEnumerable<Borrowing>> FindDetaliedEntitiesAsync(Expression<Func<Borrowing, bool>> predicate)
+    {
+        return await _dbSet
+            .Where(predicate)
+            .Include(b => b.Book)
             .AsNoTracking()
             .ToListAsync();
     }

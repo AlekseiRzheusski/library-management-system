@@ -53,7 +53,7 @@ public class GetAuthorsHandler : IRequestHandler<GetAuthors, (int, int, IEnumera
         if (totalCount > 0 && (request.PageNumber < 0 || request.PageNumber > maxPageNumber))
             throw new IndexOutOfRangeException($"Page number must not exceed {maxPageNumber}");
 
-        var result = await _authorRepository.FindAuthorAsync(expression, request.PageSize, request.PageNumber);
+        var result = await _authorRepository.FindDetaliedEntitiesPageAsync(expression, request.PageSize, request.PageNumber);
 
         if (!result.Any())
         {
