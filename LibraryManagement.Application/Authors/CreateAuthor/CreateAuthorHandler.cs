@@ -36,7 +36,7 @@ public class CreateAuthorHandler : IRequestHandler<CreateAuthor, AuthorDto>
         await _authorRepository.AddAsync(newAuthor);
         await _authorRepository.SaveAsync();
 
-        var detailedAuthor = await _authorRepository.GetDetailedAuthorByIdAsync(newAuthor.AuthorId);
+        var detailedAuthor = await _authorRepository.GetDetailedEntityByIdAsync(newAuthor.AuthorId);
         var newAuthorDto = _mapper.Map<AuthorDto>(detailedAuthor);
 
         return newAuthorDto;

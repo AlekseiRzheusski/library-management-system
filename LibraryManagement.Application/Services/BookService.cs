@@ -41,7 +41,7 @@ public class BookService : IBookService
     public async Task<BookDto?> GetBookAsync(long bookId)
     {
         _logger.LogInformation("Fetching book with {0} id", bookId);
-        var book = await _bookRepository.GetDetailedBookInfoAsync(bookId);
+        var book = await _bookRepository.GetDetailedEntityByIdAsync(bookId);
         if (book == null)
         {
             throw new EntityNotFoundException($"Book with ID {bookId} does not exist");
@@ -62,7 +62,7 @@ public class BookService : IBookService
         await _bookRepository.AddAsync(newBook);
         await _bookRepository.SaveAsync();
 
-        var detailedBook = await _bookRepository.GetDetailedBookInfoAsync(newBook.BookId);
+        var detailedBook = await _bookRepository.GetDetailedEntityByIdAsync(newBook.BookId);
         var newBookDto = _mapper.Map<BookDto>(detailedBook);
 
         _logger.LogInformation("Book with id {0} was successfuly created", newBookDto.BookId);
@@ -72,7 +72,7 @@ public class BookService : IBookService
 
     public async Task DeleteBookAsync(long bookId)
     {
-        var book = await _bookRepository.GetDetailedBookInfoAsync(bookId);
+        var book = await _bookRepository.GetDetailedEntityByIdAsync(bookId);
         if (book is null)
         {
             throw new EntityNotFoundException($"Book with ID {bookId} does not exist");
@@ -102,7 +102,7 @@ public class BookService : IBookService
             throw new IndexOutOfRangeException($"Page number must not exceed {maxPageNumber}");
 
         _logger.LogInformation("Fetching page {0}, with expression filter {1}", pageNumber, expression);
-        var resultPage = await _bookRepository.FindBooksAsync(expression, pageSize, pageNumber);
+        var resultPage = await _bookRepository.FindDetaliedEntitiesPageAsync(expression, pageSize, pageNumber);
 
         if (!resultPage.Any())
         {
@@ -132,7 +132,7 @@ public class BookService : IBookService
         _mapper.Map(command, book);
         await _bookRepository.SaveAsync();
 
-        var detailedBook = await _bookRepository.GetDetailedBookInfoAsync(bookId);
+        var detailedBook = await _bookRepository.GetDetailedEntityByIdAsync(bookId);
 
         return _mapper.Map<BookDto>(detailedBook);
     }

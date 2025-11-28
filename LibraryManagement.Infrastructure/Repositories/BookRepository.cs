@@ -11,7 +11,7 @@ public class BookRepository : BaseRepository<Book>, IBookRepository
 {
     public BookRepository(LibraryDbContext context) : base(context) { }
 
-    public async Task<Book?> GetDetailedBookInfoAsync(long id)
+    public override async Task<Book?> GetDetailedEntityByIdAsync(long id)
     {
         var book = await _dbSet.FindAsync(id);
         if (book == null) return null;
@@ -21,7 +21,10 @@ public class BookRepository : BaseRepository<Book>, IBookRepository
         return book;
     }
 
-    public async Task<IEnumerable<Book>> FindBooksAsync(Expression<Func<Book, bool>> predicate, int pageSize, int pageNumber)
+    public override async Task<IEnumerable<Book>> FindDetaliedEntitiesPageAsync(
+        Expression<Func<Book, bool>> predicate,
+        int pageSize, 
+        int pageNumber)
     {
         return await _dbSet
             .Where(predicate)
@@ -29,6 +32,16 @@ public class BookRepository : BaseRepository<Book>, IBookRepository
             .Include(b => b.Category)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public override async Task<IEnumerable<Book>> FindDetaliedEntitiesAsync(Expression<Func<Book, bool>> predicate)
+    {
+        return await _dbSet
+            .Where(predicate)
+            .Include(b => b.Author)
+            .Include(b => b.Category)
             .AsNoTracking()
             .ToListAsync();
     }

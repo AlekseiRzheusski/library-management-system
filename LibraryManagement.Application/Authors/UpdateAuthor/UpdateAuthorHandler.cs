@@ -46,7 +46,7 @@ public class UpdateAuthorHandler : IRequestHandler<UpdateAuthor, AuthorDto>
         _mapper.Map(request.Command, author);
         await _authorRepository.SaveAsync();
 
-        var detailedAuthor = await _authorRepository.GetDetailedAuthorByIdAsync(request.authorId);
+        var detailedAuthor = await _authorRepository.GetDetailedEntityByIdAsync(request.authorId);
 
         return _mapper.Map<AuthorDto>(detailedAuthor);
     }

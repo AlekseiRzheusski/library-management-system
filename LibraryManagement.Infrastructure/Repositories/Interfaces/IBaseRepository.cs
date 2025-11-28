@@ -4,6 +4,12 @@ namespace LibraryManagement.Infrastructure.Repositories.Interfaces;
 
 public interface IBaseRepository<T> where T : class
 {
+    public Task<T?> GetDetailedEntityByIdAsync(long id);
+    public Task<IEnumerable<T>> FindDetaliedEntitiesPageAsync(
+        Expression<Func<T, bool>> predicate, 
+        int pageSize, 
+        int pageNumber);
+    public Task<IEnumerable<T>> FindDetaliedEntitiesAsync(Expression<Func<T, bool>> predicate);
     Task<T?> GetByIdAsync(long id);
     Task<IEnumerable<T>> GetAllAsync();
     Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);

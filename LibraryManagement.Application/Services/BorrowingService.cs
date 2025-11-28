@@ -68,14 +68,14 @@ public class BorrowingService : IBorrowingService
         await _borrowingRepository.AddAsync(borrowing);
         await _bookRepository.SaveAsync();
 
-        var detailedBorrowing = await _borrowingRepository.GetDetailedBorrowing(borrowing.BorrowingId);
+        var detailedBorrowing = await _borrowingRepository.GetDetailedEntityByIdAsync(borrowing.BorrowingId);
 
         return _mapper.Map<BorrowingDto>(detailedBorrowing);
     }
 
     public async Task<BorrowingDto> ReturnBookAsync(long borrowingId)
     {
-        var detailedBorrowing = await _borrowingRepository.GetDetailedBorrowing(borrowingId);
+        var detailedBorrowing = await _borrowingRepository.GetDetailedEntityByIdAsync(borrowingId);
         if (detailedBorrowing is null)
         {
             throw new EntityNotFoundException($"Book with ID {borrowingId} does not exist");
@@ -110,7 +110,7 @@ public class BorrowingService : IBorrowingService
         if (totalCount > 0 && (pageNumber < 0 || pageNumber > maxPageNumber))
             throw new IndexOutOfRangeException($"Page number must not exceed {maxPageNumber}");
 
-        var result = await _borrowingRepository.FindBorrowingsAsync(expression, pageNumber, pageSize);
+        var result = await _borrowingRepository.FindDetaliedEntitiesPageAsync(expression, pageSize, pageNumber);
 
         if (!result.Any())
         {
