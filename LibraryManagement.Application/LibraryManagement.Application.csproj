@@ -7,8 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AdaskoTheBeAsT.MediatR.SimpleInjector" Version="12.0.0" />
     <PackageReference Include="AutoMapper" Version="15.1.0" />
     <PackageReference Include="FluentValidation" Version="12.1.0" />
+    <PackageReference Include="MediatR" Version="13.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" />
     <PackageReference Include="SimpleInjector" Version="5.5.0" />
   </ItemGroup>

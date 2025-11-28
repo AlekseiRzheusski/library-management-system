@@ -7,7 +7,7 @@ namespace LibraryManagement.Application.Services;
 public class CategorySortOrderService : ICategorySortOrderService
 {
     private readonly ICategoryRepository _categoryRepository;
-    private int _currentSort = 0;
+    private int _currentSort;
 
     public CategorySortOrderService(ICategoryRepository categoryRepository)
     {
@@ -23,12 +23,10 @@ public class CategorySortOrderService : ICategorySortOrderService
         foreach (var category in categories)
         {
             category.SubCategories = lookup[category.CategoryId]
-                .OrderBy(c => c.Name)
                 .ToList();
         }
 
         var roots = lookup[null]
-            .OrderBy(c => c.Name)
             .ToList();
 
         _currentSort = 0;
