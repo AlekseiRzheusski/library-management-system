@@ -50,7 +50,7 @@ public class BorrowingService : IBorrowingService
             throw new ValidationException(message);
         }
 
-        var borrowDate = DateTime.Today;
+        var borrowDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
         var dueDate = borrowDate.AddDays(command.daysToReturn ?? DefaultDaysToReturn);
 
         var book = await _bookRepository.GetByIdAsync(command.BookId);
@@ -86,7 +86,7 @@ public class BorrowingService : IBorrowingService
         }
 
         detailedBorrowing.Status = BorrowingStatus.Returned;
-        detailedBorrowing.ReturnDate = DateTime.Today;
+        detailedBorrowing.ReturnDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
         detailedBorrowing.Book.IsAvailable = true;
 
         await _borrowingRepository.SaveAsync();
@@ -148,7 +148,7 @@ public class BorrowingService : IBorrowingService
     public async Task CheckExpiredBorrowingsAsync()
     {
         _logger.LogInformation($"Checking expired borrowings at {DateTime.Now}");
-        var currentDate = DateTime.Today;
+        var currentDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
         var activeBorrowings = await _borrowingRepository.FindAndAddToContextAsync(
             b => b.Status == BorrowingStatus.Active && b.DueDate<=currentDate);
 

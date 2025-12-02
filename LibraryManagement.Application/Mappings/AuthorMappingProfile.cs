@@ -16,13 +16,14 @@ public class AuthorMappingProfile : Profile
                     ? src.DateOfBirth.Value.ToString("yyyy-MM-dd")
                     : string.Empty));
         
+        //TODO check is we can use DateTimeOffset instead of DateTime
         CreateMap<CreateAuthorCommand, Author>()
             .ForMember(dest => dest.DateOfBirth,
-                opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.DateOfBirth) ? DateTime.Parse(src.DateOfBirth) : (DateTime?)null));
+                opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.DateOfBirth) ? DateTime.SpecifyKind(DateTime.Parse(src.DateOfBirth), DateTimeKind.Utc) : (DateTime?)null));
         
         CreateMap<UpdateAuthorCommand, Author>()
             .ForMember(dest => dest.DateOfBirth,
-                opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.DateOfBirth) ? DateTime.Parse(src.DateOfBirth) : (DateTime?)null))
+                opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.DateOfBirth) ? DateTime.SpecifyKind(DateTime.Parse(src.DateOfBirth), DateTimeKind.Utc) : (DateTime?)null))
             .ForAllMembers(
                 opt => opt.Condition((src, dest, srcMember) => srcMember != null));;
     }

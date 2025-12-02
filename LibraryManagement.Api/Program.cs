@@ -34,11 +34,22 @@ var loggerFactory = LoggerFactory.Create(builder =>
   builder.AddSerilog();
 });
 
-var options = new DbContextOptionsBuilder<LibraryDbContext>()
-      .UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
-      //   .EnableSensitiveDataLogging()
-      // .UseLoggerFactory(loggerFactory)
-      .Options;
+var provider = builder.Configuration.GetValue<string>("DatabaseProvider", "PostgreSql");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+DbContextOptions<LibraryDbContext> options = provider == "Sqlite"
+    ? new DbContextOptionsBuilder<LibraryDbContext>()
+        .UseSqlite(connectionString, sql =>
+            sql.MigrationsAssembly("LibraryManagement.Migrations.Sqlite"))
+        // .EnableSensitiveDataLogging()
+        // .UseLoggerFactory(loggerFactory)
+        .Options
+    : new DbContextOptionsBuilder<LibraryDbContext>()
+        .UseNpgsql(connectionString, pg =>
+            pg.MigrationsAssembly("LibraryManagement.Migrations.PostgreSql"))
+        // .EnableSensitiveDataLogging()
+        // .UseLoggerFactory(loggerFactory)
+        .Options;
 
 container.AddInfrastructure(options);
 container.AddApplication();

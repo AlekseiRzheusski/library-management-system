@@ -13,12 +13,23 @@ public class LibraryDbContextFactory : IDesignTimeDbContextFactory<LibraryDbCont
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: true)
             .Build();
+        
+         var provider = configuration["DatabaseProvider"]
+                       ?? "PostgreSql";
 
-        var connectionString = configuration.GetConnectionString("DefaultConnection")
-                               ?? "Data Source=test.db";
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
 
         var optionsBuilder = new DbContextOptionsBuilder<LibraryDbContext>();
-        optionsBuilder.UseSqlite(connectionString);
+        if (provider == "Sqlite")
+        {
+            optionsBuilder.UseSqlite(connectionString, x =>
+                x.MigrationsAssembly("LibraryManagement.Migrations.Sqlite"));
+        }
+        else
+        {
+            optionsBuilder.UseNpgsql(connectionString, x =>
+                x.MigrationsAssembly("LibraryManagement.Migrations.PostgreSql"));
+        }
         return new LibraryDbContext(optionsBuilder.Options);
     }
 }

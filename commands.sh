@@ -50,8 +50,22 @@ dotnet add LibraryManagement.Api/ package Hangfire
 dotnet add LibraryManagement.Api/ package Hangfire.AspNetCore
 dotnet add LibraryManagement.Api/ package Hangfire.SQLite
 
+#Postgresql
+dotnet add LibraryManagement.Api package Npgsql.EntityFrameworkCore.PostgreSQL --version 8.0.4
+
 #migrations
 dotnet ef migrations add InitialCreate --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api
 #to show SQL comands --verbose
 dotnet ef database update --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api --verbose
 dotnet ef migrations add SeedData --project LibraryManagement.Infrastructure --startup-project LibraryManagement.Api
+
+#sqlite migration
+dotnet ef database update   --project LibraryManagement.Migrations.Sqlite   --startup-project LibraryManagement.Api/   --context LibraryDbContext   --verbose
+
+#rollback
+dotnet ef database update 0 --startup-project LibraryManagement.Api
+#delete migrations
+dotnet ef migrations remove --project LibraryManagement.Migrations.Sqlite --startup-project LibraryManagement.Api
+
+#first migration should be created in the same startup project
+dotnet ef migrations add InitialPostgreSql   --project LibraryManagement.Migrations.PostgreSql/   --startup-project LibraryManagement.Migrations.PostgreSql/   --context LibraryDbContext   --verbose

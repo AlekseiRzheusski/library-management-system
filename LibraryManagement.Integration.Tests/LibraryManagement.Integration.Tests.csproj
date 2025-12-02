@@ -37,6 +37,7 @@
     <ProjectReference Include="..\LibraryManagement.Api\LibraryManagement.Api.csproj" />
     <ProjectReference Include="..\LibraryManagement.Shared\LibraryManagement.Shared.csproj" />
     <ProjectReference Include="..\LibraryManagement.Contract\LibraryManagement.Contract.csproj" />
+    <ProjectReference Include="..\LibraryManagement.Migrations.Sqlite\LibraryManagement.Migrations.Sqlite.csproj" />
   </ItemGroup>
 
 </Project>
