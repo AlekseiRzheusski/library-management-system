@@ -25,7 +25,7 @@ public class SqliteTestDatabaseFixture : IAsyncLifetime
         await _connection.OpenAsync();
 
         var options = new DbContextOptionsBuilder<LibraryDbContext>()
-            .UseSqlite(_connection)
+            .UseSqlite(_connection, x => x.MigrationsAssembly("LibraryManagement.Migrations.Sqlite"))
             .Options;
 
         Container.Register(typeof(ILogger<>), typeof(Logger<>), Lifestyle.Singleton);

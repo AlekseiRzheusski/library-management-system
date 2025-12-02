@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace LibraryManagement.Infrastructure.Migrations
+namespace LibraryManagement.Migrations.Sqlite.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20251108155755_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251202104545_InitialSqlite")]
+    partial class InitialSqlite
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

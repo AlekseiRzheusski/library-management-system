@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace LibraryManagement.Infrastructure.Migrations
+namespace LibraryManagement.Migrations.Sqlite.Migrations
 {
     /// <inheritdoc />
     public partial class SeedData : Migration
@@ -434,6 +434,12 @@ namespace LibraryManagement.Infrastructure.Migrations
             migrationBuilder.DeleteData("Books", "BookId", 6);
             migrationBuilder.DeleteData("Books", "BookId", 7);
             migrationBuilder.DeleteData("Books", "BookId", 8);
+            migrationBuilder.DeleteData("Books", "BookId", 9);
+            migrationBuilder.DeleteData("Books", "BookId", 10);
+            migrationBuilder.DeleteData("Books", "BookId", 11);
+            migrationBuilder.DeleteData("Books", "BookId", 12);
+            migrationBuilder.DeleteData("Books", "BookId", 13);
+            migrationBuilder.DeleteData("Books", "BookId", 14);
 
             migrationBuilder.DeleteData("Categories", "CategoryId", 1);
             migrationBuilder.DeleteData("Categories", "CategoryId", 2);
@@ -441,12 +447,23 @@ namespace LibraryManagement.Infrastructure.Migrations
             migrationBuilder.DeleteData("Categories", "CategoryId", 4);
             migrationBuilder.DeleteData("Categories", "CategoryId", 5);
             migrationBuilder.DeleteData("Categories", "CategoryId", 6);
+            migrationBuilder.DeleteData("Categories", "CategoryId", 7);
+            migrationBuilder.DeleteData("Categories", "CategoryId", 8);
 
             migrationBuilder.DeleteData("Authors", "AuthorId", 1);
             migrationBuilder.DeleteData("Authors", "AuthorId", 2);
             migrationBuilder.DeleteData("Authors", "AuthorId", 3);
             migrationBuilder.DeleteData("Authors", "AuthorId", 4);
             migrationBuilder.DeleteData("Authors", "AuthorId", 5);
+            migrationBuilder.DeleteData("Authors", "AuthorId", 6);
+
+            migrationBuilder.DeleteData("Borrowings", "BorrowingId", 1);
+            migrationBuilder.DeleteData("Borrowings", "BorrowingId", 2);
+            migrationBuilder.DeleteData("Borrowings", "BorrowingId", 3);
+            migrationBuilder.DeleteData("Borrowings", "BorrowingId", 4);
+            migrationBuilder.DeleteData("Borrowings", "BorrowingId", 5);
+            migrationBuilder.DeleteData("Borrowings", "BorrowingId", 6);
+            migrationBuilder.DeleteData("Borrowings", "BorrowingId", 7);
         }
     }
 }

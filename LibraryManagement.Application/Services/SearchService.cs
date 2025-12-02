@@ -38,7 +38,7 @@ public class SearchService<T> : ISearchService<T>
         else if ((Nullable.GetUnderlyingType(tPropType.PropertyType) ?? tPropType.PropertyType) == typeof(DateTime))
         {
             string strDtoValue = dtoValue.ToString()!;
-            var dateTime = DateTime.Parse(strDtoValue);
+            var dateTime = DateTime.SpecifyKind(DateTime.Parse(strDtoValue), DateTimeKind.Utc);
             var propExpr = Expression.Property(param, tPropType.Name);
 
             return Expression.Equal(
