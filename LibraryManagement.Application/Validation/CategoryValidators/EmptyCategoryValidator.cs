@@ -1,6 +1,8 @@
 using FluentValidation;
 using LibraryManagement.Domain.Entities;
 
+namespace LibraryManagement.Application.Validation.BorrowingValidators;
+
 public class EmptyCategoryValidator: AbstractValidator<Category>
 {
     public EmptyCategoryValidator()
