@@ -13,6 +13,7 @@ using LibraryManagement.Application.Services.DTOs.BorrowingModels;
 using LibraryManagement.Application.Services.DTOs.CategoryModels;
 using LibraryManagement.Application.Services.DTOs.AuthorModels;
 using LibraryManagement.Application.Authors.GetAuthor;
+using LibraryManagement.Domain.Entities;
 
 namespace LibraryManagement.Application;
 
@@ -36,6 +37,7 @@ public static class DependencyInjection
 
         container.Register<IValidator<SearchCategoryCommand>, SearchCategoryCommandValidator>(Lifestyle.Scoped);
         container.Register<IValidator<CreateCategoryCommand>, CreateCategoryCommandValidator>(Lifestyle.Scoped);
+        container.Register<IValidator<Category>, EmptyCategoryValidator>(Lifestyle.Scoped);
 
         container.Register<IValidator<SearchAuthorCommand>, SearchAuthorCommandValidator>(Lifestyle.Scoped);
         container.Register<IValidator<CreateAuthorCommand>, CreateAuthorCommandValidator>(Lifestyle.Scoped);

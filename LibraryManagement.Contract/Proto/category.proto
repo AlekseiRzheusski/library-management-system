@@ -8,6 +8,7 @@ service CategoryService {
   rpc GetCategories(CategorySearchRequest) returns (CategoryListResponse);
   rpc GetCategoryTree(CategoryTreeRequest) returns (CategoryTreeListResponse);
   rpc CreateCategory(CreateCategoryRequest) returns (CategoryResponse);
+  rpc DeleteCategory(CategoryDeleteRequest) returns (CategoryDeleteResponse);
 }
 
 message CategorySearchRequest {
@@ -54,4 +55,12 @@ message CategoryListResponse {
 
 message CategoryTreeListResponse {
   repeated CategoryTreeResponse categories = 1;
+}
+
+message CategoryDeleteRequest {
+  int64 category_id = 1;
+}
+
+message CategoryDeleteResponse {
+  string message = 2;
 }
