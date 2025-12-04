@@ -5,6 +5,7 @@ using LibraryManagement.Integration.Tests.Fixtures;
 using LibraryManagement.Application.Services.DTOs.AuthorModels;
 using LibraryManagement.Application.Authors.CreateAuthor;
 
+namespace LibraryManagement.Integration.Tests.Application.Author;
 [Collection("Author collection")]
 public class CreateAuthorTests
 {

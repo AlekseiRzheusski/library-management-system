@@ -115,4 +115,42 @@ public class CategoryServiceTests : IClassFixture<SqliteTestDatabaseFixture>
         }
     }
 
+    [Fact]
+    public async Task DeleteCategoryAsync_IfCategoryHasRelatedBooks_ShouldThrow()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<ICategoryService>();
+
+            var ex = await Assert.ThrowsAsync<ValidationException>(async () =>
+            {
+                await service.DeleteCategoryAsync(6);
+            });
+
+            Assert.Equal("This category has related books; This category has related subcategories", ex.Message);
+        }
+    }
+
+    [Fact]
+    public async Task DeleteCategoryAsync_IfCategoryDoesNotHaveRelatedBooksOrSubcategories_ShouldDelete()
+    {
+        using (AsyncScopedLifestyle.BeginScope(_fixture.Container))
+        {
+            var service = _fixture.Container.GetInstance<ICategoryService>();
+            var categoryRepository = _fixture.Container.GetInstance<ICategoryRepository>();
+
+            var command = new CreateCategoryCommand
+            {
+                Name = "News paper",
+                Description = "News paper",
+                ParentCategoryId = 3
+            };
+
+            var result = await service.CreateCategoryAsync(command);
+
+            await service.DeleteCategoryAsync(result.CategoryId);
+            var deletedEntity = await categoryRepository.ExistsAsync(c=>c.CategoryId==result.CategoryId);
+            Assert.False(deletedEntity);
+        }
+    }
 }
