@@ -17,6 +17,7 @@ public class CategoryService : ICategoryService
     private readonly ICategorySortOrderService _categorySortOrderService;
     private readonly IValidator<SearchCategoryCommand> _searchCategoryCommandValidator;
     private readonly IValidator<CreateCategoryCommand> _createCategoryCommandValidator;
+    private readonly IValidator<Category> _emptyCategoryValidator;
 
     public CategoryService(
         IMapper mapper,
@@ -24,7 +25,8 @@ public class CategoryService : ICategoryService
         ISearchService<Category> categorySearchService,
         ICategorySortOrderService categorySortOrderService,
         IValidator<SearchCategoryCommand> searchCategoryCommandValidator,
-        IValidator<CreateCategoryCommand> createCategoryCommandValidator
+        IValidator<CreateCategoryCommand> createCategoryCommandValidator,
+        IValidator<Category> emptyCategoryValidator
     )
     {
         _mapper = mapper;
@@ -33,6 +35,7 @@ public class CategoryService : ICategoryService
         _categorySortOrderService = categorySortOrderService;
         _searchCategoryCommandValidator = searchCategoryCommandValidator;
         _createCategoryCommandValidator = createCategoryCommandValidator;
+        _emptyCategoryValidator = emptyCategoryValidator;
     }
 
     public async Task<List<CategoryTreeDto>> GetCategoryTreeAsync()
@@ -91,5 +94,24 @@ public class CategoryService : ICategoryService
         var newDetailedCategory = await _categoryRepository.GetDetailedEntityByIdAsync(newCategory.CategoryId);
 
         return _mapper.Map<CategoryDto>(newDetailedCategory);
+    }
+
+    public async Task DeleteCategoryAsync(long categoryId)
+    {
+        var category = await _categoryRepository.GetDetailedEntityByIdAsync(categoryId);
+        if (category is null)
+        {
+            throw new EntityNotFoundException($"Category with ID {categoryId} does not exist");
+        }
+
+        var validation = await _emptyCategoryValidator.ValidateAsync(category);
+        if (!validation.IsValid)
+        {
+            var message = string.Join("; ", validation.Errors.Select(e => e.ErrorMessage));
+            throw new ValidationException(message);
+        }
+
+        _categoryRepository.Delete(category);
+        await _categoryRepository.SaveAsync();
     }
 }

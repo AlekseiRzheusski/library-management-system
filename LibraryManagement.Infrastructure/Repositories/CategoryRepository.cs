@@ -18,6 +18,7 @@ public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
 
         await _context.Entry(category).Reference(c => c.ParentCategory).LoadAsync();
         await _context.Entry(category).Collection(c => c.Books).LoadAsync();
+        await _context.Entry(category).Collection(c => c.SubCategories).LoadAsync();
         return category;
     }
 

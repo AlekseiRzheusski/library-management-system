@@ -7,4 +7,5 @@ public interface ICategoryService
     public Task<List<CategoryTreeDto>> GetCategoryTreeAsync();
     public Task<List<CategoryDto>> GetCategoriesAsync(SearchCategoryCommand command);
     public Task<CategoryDto> CreateCategoryAsync(CreateCategoryCommand command);
+    public Task DeleteCategoryAsync(long categoryId);
 }
