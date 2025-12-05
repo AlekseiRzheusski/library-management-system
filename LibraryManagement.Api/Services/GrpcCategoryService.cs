@@ -87,4 +87,24 @@ public class GrpcCategoryService : CategoryService.CategoryServiceBase
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
+    public override async Task<CategoryDeleteResponse> DeleteCategory(CategoryDeleteRequest request, ServerCallContext context)
+    {
+        try
+        {
+            await _categoryService.DeleteCategoryAsync(request.CategoryId);
+            return new CategoryDeleteResponse { Message = $"Category {request.CategoryId} was successfully deleted." };
+        }
+        catch(ValidationException ex)
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+        }
+        catch (EntityNotFoundException ex)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+        }
+    }
 }
