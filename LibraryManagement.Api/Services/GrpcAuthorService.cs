@@ -10,6 +10,7 @@ using LibraryManagement.Application.Authors.GetAuthors;
 using LibraryManagement.Application.Authors.UpdateAuthor;
 using LibraryManagement.Application.Services.DTOs.AuthorModels;
 using LibraryManagement.Shared.Exceptions;
+using LibraryManagement.Application.Authors.DeleteAuthor;
 
 public class GrpcAuthorService : AuthorService.AuthorServiceBase
 {
@@ -113,6 +114,27 @@ public class GrpcAuthorService : AuthorService.AuthorServiceBase
             return _mapper.Map<AuthorResponse>(updatedAuthorDto);
         }
         catch (ValidationException ex)
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+        }
+        catch (EntityNotFoundException ex)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            throw new RpcException(new Status(StatusCode.Internal, ex.Message));
+        }
+    }
+
+    public override async Task<AuthorDeleteResponse> DeleteAuthor(AuthorDeleteRequest request, ServerCallContext context)
+    {
+        try
+        {
+            await _mediator.Send(new DeleteAuthor(request.AuthorId));
+            return new AuthorDeleteResponse { Message = $"Author {request.AuthorId} was successfully deleted." };
+        }
+        catch(ValidationException ex)
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
         }
