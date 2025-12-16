@@ -228,7 +228,7 @@ namespace LibraryManagement.Migrations.PostgreSql.Migrations
                         5,
                         DateTime.SpecifyKind(new DateTime(2001,7,10), DateTimeKind.Utc),
                         192,
-                        false,
+                        true,
                         DateTime.UtcNow
                     },
                     {
@@ -240,7 +240,7 @@ namespace LibraryManagement.Migrations.PostgreSql.Migrations
                         6,
                         DateTime.SpecifyKind(new DateTime(2016,10,18), DateTimeKind.Utc),
                         896,
-                        false,
+                        true,
                         DateTime.UtcNow
                     },
                     {
@@ -252,7 +252,7 @@ namespace LibraryManagement.Migrations.PostgreSql.Migrations
                         6,
                         DateTime.SpecifyKind(new DateTime(2019,11,5), DateTimeKind.Utc),
                         896,
-                        false,
+                        true,
                         DateTime.UtcNow
                     },
                     {
@@ -264,7 +264,7 @@ namespace LibraryManagement.Migrations.PostgreSql.Migrations
                         5,
                         DateTime.SpecifyKind(new DateTime(2004,8,3), DateTimeKind.Utc),
                         600,
-                        false,
+                        true,
                         DateTime.UtcNow
                     },
                 }

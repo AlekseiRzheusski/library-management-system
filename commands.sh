@@ -69,3 +69,6 @@ dotnet ef migrations remove --project LibraryManagement.Migrations.Sqlite --star
 
 #first migration should be created in the same startup project
 dotnet ef migrations add InitialPostgreSql   --project LibraryManagement.Migrations.PostgreSql/   --startup-project LibraryManagement.Migrations.PostgreSql/   --context LibraryDbContext   --verbose
+
+docker compose down -v
+docker system prune -f

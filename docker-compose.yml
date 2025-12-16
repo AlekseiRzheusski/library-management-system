@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  api:
+    build: .
+    container_name: library_management_api
+    ports:
+      - "5112:5112" # HTTP1
+      - "5113:5113" # HTTP2
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      DatabaseProvider: "PostgreSql"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=librarydb;Username=library_user;Password=pass123"
+      ConnectionStrings__HangfireConnection: "Data Source=/app/hangfire.db;"
+    volumes:
+      - hangfire_data:/app
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    container_name: library_postgres_db
+    environment:
+      POSTGRES_DB: librarydb
+      POSTGRES_USER: library_user
+      POSTGRES_PASSWORD: pass123
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  hangfire_data:
+  postgres_data:
