@@ -2,6 +2,8 @@ using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Serilog;
 
+namespace LibraryManagement.Api.Interceptors;
+
 public class LoggingInterceptor : Interceptor
 {
     private readonly ILogger<LoggingInterceptor> _logger;
