@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Hangfire;
 using Hangfire.SQLite;
+using Polly;
+using Npgsql;
 
 using LibraryManagement.Infrastructure;
 using LibraryManagement.Infrastructure.Data;
@@ -88,7 +90,21 @@ builder.Services.AddHangfireServer(options =>
 var app = builder.Build();
 
 app.Services.UseSimpleInjector(container);
-app.UseHangfireDashboard("/hangfire");
+
+var retryPolicy = Policy
+    .Handle<NpgsqlException>()
+    .WaitAndRetry(10, retryAttempt => TimeSpan.FromSeconds(2));
+
+using (AsyncScopedLifestyle.BeginScope(container))
+{
+    var db = container.GetInstance<LibraryDbContext>();
+    db.Database.Migrate();
+}
+
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new AllowAllDashboardAuthorizationFilter() }
+});
 
 RecurringJob.AddOrUpdate<IBorrowingService>(
   "check-expired-borrowings",
