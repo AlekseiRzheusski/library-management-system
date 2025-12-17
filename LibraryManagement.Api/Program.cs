@@ -14,6 +14,7 @@ using LibraryManagement.Application.Services.Interaces;
 using LibraryManagement.Api;
 using LibraryManagement.Api.Services;
 using LibraryManagement.Api.Hangfire;
+using LibraryManagement.Api.Interceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,7 @@ builder.Services.AddScoped<GrpcAuthorService>(sp => container.GetInstance<GrpcAu
 builder.Services.AddGrpc(options =>
 {
   options.Interceptors.Add<LoggingInterceptor>();
+  options.Interceptors.Add<AuthenticationInterceptor>();
 });
 
 builder.Services.AddHangfire(config =>
