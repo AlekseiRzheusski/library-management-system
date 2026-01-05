@@ -72,3 +72,6 @@ dotnet ef migrations add InitialPostgreSql   --project LibraryManagement.Migrati
 
 docker compose down -v
 docker system prune -f
+
+#if connection to docker is started to fail with timeout exceeded
+sudo systemctl restart docker
