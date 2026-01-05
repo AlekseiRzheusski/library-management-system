@@ -12,6 +12,9 @@ using LibraryManagement.Application.Services.DTOs.AuthorModels;
 using LibraryManagement.Shared.Exceptions;
 using LibraryManagement.Application.Authors.DeleteAuthor;
 
+/// <summary>
+/// tmp
+/// </summary>
 public class GrpcAuthorService : AuthorService.AuthorServiceBase
 {
     private readonly IMediator _mediator;
