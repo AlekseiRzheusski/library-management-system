@@ -69,7 +69,7 @@ public class GrpcBookServiceTests
         var context = Mock.Of<ServerCallContext>();
 
         var result = await _grpcBookService.GetBook(request, context);
-        Assert.Equal(book.BookId, result.Book.BookId);
+        Assert.Equal(100, result.Book.BookId);
 
         _bookServiceMock.Verify(s =>
             s.GetBookAsync(1),
