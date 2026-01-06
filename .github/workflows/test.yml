@@ -3,8 +3,13 @@ name: .NET 8.0 CI
 on:
   pull_request: 
     branches: [ "master" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build-and-test:
+  ci:
     if: startsWith(github.head_ref, 'ignore-actions/') == false
     runs-on: ${{ matrix.os }}
     strategy:
