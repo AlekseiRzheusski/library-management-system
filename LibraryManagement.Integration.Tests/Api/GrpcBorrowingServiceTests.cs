@@ -72,4 +72,34 @@ public class GrpcBorrowingServiceTests
             s.BorrowBookAsync(It.IsAny<BorrowBookCommand>()),
             Times.Once);
     }
+
+    [Fact]
+    public async Task ReturnBook_IfBorrowingExists_ShouldReturnBorrowing()
+    {
+        var borrowing = new BorrowingDto
+        {
+            BorrowingId = 1,
+            BookId = 1,
+            BookTitle = "Test book",
+            BorrowDate = "2026-01-06",
+            DueDate = "2026-01-16",
+            ReturnDate = "2026-01-12",
+            Status = "Returned"
+        };
+        var request = new ReturnBookRequest { BorrowingId = 1L };
+        var context = Mock.Of<ServerCallContext>();
+
+        _borrowingServiceMock
+            .Setup(s => s.ReturnBookAsync(It.IsAny<long>()))
+            .ReturnsAsync(borrowing);
+
+        var result = await _grpcBorrowingService.ReturnBook(request, context);
+
+        Assert.NotNull(result);
+        Assert.Equal(borrowing.BookTitle, result.BookTitle);
+
+        _borrowingServiceMock.Verify(s =>
+            s.ReturnBookAsync(request.BorrowingId),
+            Times.Once);
+    }
 }
