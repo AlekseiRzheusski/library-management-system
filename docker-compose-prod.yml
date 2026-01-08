@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  api:
+    build: .
+    container_name: library_management_api
+    ports:
+      - "5112:5112" # HTTP1
+      - "5113:5113" # HTTP2
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      DatabaseProvider: "PostgreSql"
+      ConnectionStrings__DefaultConnection: ${DEFAULT_CONNECTION}
+      ConnectionStrings__HangfireConnection: "Data Source=/app/hangfire.db;"
+    volumes:
+      - hangfire_data:/app
+
+volumes:
+  hangfire_data:
