@@ -3,6 +3,7 @@ version: '3.9'
 services:
   api:
     build: .
+    image: arzheussky-library-management-system:latest
     container_name: library_management_api
     ports:
       - "5112:5112" # HTTP1
