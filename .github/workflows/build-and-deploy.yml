@@ -32,6 +32,9 @@ jobs:
           DEFAULT_CONNECTION: ${{ secrets.DEFAULT_CONNECTION }}
         run: docker compose -f docker-compose-prod.yml build
 
+      - name: List images 
+        run: docker images
+
       - name: Tag image
         run: |
           ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
