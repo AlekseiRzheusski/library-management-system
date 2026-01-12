@@ -71,7 +71,7 @@ public class GrpcAuthorServiceTests
         var result = await _grpcAuthorService.GetAuthor(request, context);
 
         Assert.NotNull(result);
-        Assert.Equal(author.AuthorId, result.Author.AuthorId);
+        Assert.Equal(100, result.Author.AuthorId);
 
         _mediatorMock.Verify(s =>
             s.Send(
